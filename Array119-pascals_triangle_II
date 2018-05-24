@@ -1,0 +1,53 @@
+
+# Given an index k, return the kth row of the Pascal's triangle.
+# For example, given k = 3,
+# Return [1,3,3,1]
+# Could you optimize your algorithm to use only O(k) extra space?
+# 用到一个小小的trick，即：每一行的结果可以由上一行和上一行的偏移相加得到
+# 其实每一行的结果是二项式展开的系数，但是考虑到当给定的参数过大的时候，在求组合的过程中会出现溢出(中间过程要用到乘法)，
+# 但是这样的算法的时间复杂度是O(N)，所以在参数不太大的时候，还是不错的。
+# 这里用迭代的方法来求，当然复杂度就高了，是O(N^2)，这里主要说下迭代时候的技巧，即在一个列表(数组)里进行迭代，实现如此的操作，
+# 要求在求下一行的时候，要从后往前进行，若是从前向后，就把后面要用的变量给改掉了，产生“脏”数据。从后向前不会(为何？)，因为下一行比上一行多一个。\
+
+class Solution(object):
+    def getRow(self, rowIndex):
+        """
+        :type rowIndex: int
+        :rtype: List[int]
+        """
+        res = [1] + [0] * rowIndex
+        for i in range(rowIndex):
+            res[0] = 1
+            for j in range(i+1, 0, -1):
+                res[j] = res[j] + res[j-1]
+        return res
+        
+class Solution(object):
+    def getRow(self, rowIndex):
+        """
+        :type rowIndex: int
+        :rtype: List[int]
+        """
+        result = [1] * (rowIndex + 1)
+        for i in range(2, rowIndex + 1):
+            for j in range(1, i):
+                result[i - j] += result[i - j - 1]
+        return result
+# 另外，也可以不考虑上一行，直接根据公式求出当前行的内容。帕斯卡三角形的第n行第m个元素是 
+# C(n, m) = n!/(m! * (n-m)!)。所以 C(n, m-1) = n!/((m-1)! * (n-m+1)!)，所以 C(n, m) = C(n, m-1) * (n-m+1) / m。
+# 另外，有组合数的性质可以减少一半计算量：C(n, m) == C(n, n-m)。
+
+class Solution(object):
+    def getRow(self, rowIndex):
+        """
+        :type rowIndex: int
+        :rtype: List[int]
+        """
+        res = [1] * (rowIndex+1)
+        for i in range(1, rowIndex/2+1):
+            res[i] = res[rowIndex-i] = res[i-1] * (rowIndex-i+1) / i
+        return res
+
+
+if __name__ == "__main__":
+    assert Solution().getRow(3) == [1, 3, 3, 1]
