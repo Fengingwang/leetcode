@@ -1,0 +1,21 @@
+# Time:  O(n)
+# Space: O(1)
+# Say you have an array for which the ith element
+# is the price of a given stock on day i.
+# If you were only permitted to complete at most one transaction
+# (ie, buy one and sell one share of the stock),
+# design an algorithm to find the maximum profit.
+# 假设有一个数组，它的第i项是第i天的股票价格。如果你最多只能进行一次买卖操作（买一次，卖一次），设计一个算法求出最大的收益。
+# 直观的理解，就是求数组中 max(array[j]-array[i]), j>=i。用两重循环求出每一对不同i,j的差值，这样做会超时，所以要用更巧妙的方法。
+# 解题思路：扫描一遍数组，使用low来标记最低价位，如果有更低的价位，置换掉。
+
+class Solution(object):
+    # @param prices, a list of integer
+    # @return an integer
+    def maxProfit(self, prices):
+        max_profit = 0
+        min_price = prices[0]
+        for price in prices:
+            min_price = min(min_price, price)
+            max_profit = max(max_profit, price - min_price)
+        return max_profit
