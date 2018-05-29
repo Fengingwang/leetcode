@@ -6,7 +6,7 @@
 # rotate 2 steps to the right: [6,7,1,2,3,4,5]
 # rotate 3 steps to the right: [5,6,7,1,2,3,4]
 # cannot be written as: nums = nums[n-k:] + nums[:n-k]
-# o(1) time + o(1) space
+# o(n) time + o(1) space
 class Solution:
     # @param nums, a list of integer
     # @param k, num of steps
