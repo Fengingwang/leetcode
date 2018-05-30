@@ -1,0 +1,16 @@
+# O(n) time 
+# O(1) space
+# Given an integer array, you need to find one continuous subarray that 
+# if you only sort this subarray in ascending order, then the whole array will be sorted in ascending order 
+# You need to find the shortest such subarray and output its length.
+# Input: [2, 6, 4, 8, 10, 9, 15]
+# Output: 5
+# Explanation: You need to sort [6, 4, 8, 10, 9] in ascending order to make the whole array sorted in ascending order
+# 这道题给了我们一个数组，让我们求最短的无序连续子数组，根据题目中的例子也不难分析出来是让我们找出数组中的无序的部分
+def findUnsortedSubarray(self, nums):
+        is_same = [a == b for a, b in zip(nums, sorted(nums))]
+        return 0 if all(is_same) else len(nums) - is_same.index(False) - is_same[::-1].index(False)
+
+def findUnsortedSubarray(self, nums):
+        res = [i for (i,(a,b)) in enumerate(zip(nums,sorted(nums))) if a!=b]
+        return 0 if not res else res[-1]-res[0]+1
