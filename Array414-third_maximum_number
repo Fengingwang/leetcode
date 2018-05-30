@@ -1,0 +1,59 @@
+# Time:  O(n)
+# Space: O(1)
+# Given an array of integers, return the 3rd Maximum Number in this array,
+# if it does not exist, return the Maximum Number
+# Input: [3, 2, 1]  Output: 1  Explanation: The third maximum is 1.
+# Input: [1, 2]  Output: 2  Explanation: The third maximum does not exist, so the maximum (2) is returned instead
+# Input: [2, 2, 3, 1]  Output: 1 
+# Explanation: the third maximum is the third maximum distinct number, so value 2 are both considered as second maximum 
+# The time complexity must be O(n) or less
+思路一：利用set集合。首先将数组nums转换为set，去除重复元素。（Python中需要再次对set取list，这是因为set不存在index）
+如果set的大小小于3，则直接返回其中最大的数。依次设置第一大fmax=nums[0] 第二大smax=-65536 第三大tmax=-65536 
+遍历nums的set集合。如果当前值大于fmax，则依次改变tmax=smax，smax=fmax，fmax=nums[i]
+否则，如果当前值大于smax，则依次改变tmax=smax，smax=nums[i]
+否则，如果当前值大于tmax，则改变tmax=nums[i]
+遍历结束，返回tmax即可
+思路二：在Python中，set是无序的，且不可通过下标访问的。可以使用max()函数
+如果set大小小于3，则直接返回max(set)
+否则，移除两次set中的最大值set.remove(max(set))，然后返回此时set中的最大值即可
+
+class Solution(object):
+    def thirdMax(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        nums=set(nums)
+        nums=list(nums)
+        if len(nums)==1:
+            return nums[0]
+        if len(nums)==2:
+            return max(nums[0],nums[1])
+        fmax=nums[0]
+        smax=-65536
+        tmax=-65536
+        for i in range(len(nums)):
+            if nums[i]>fmax:
+                tmax=smax
+                smax=fmax
+                fmax=nums[i]
+            else:
+                if nums[i]>smax:
+                    tmax=smax
+                    smax=nums[i]
+                else:
+                    if nums[i]>tmax:
+                        tmax=nums[i]
+        return tmax
+
+    def thirdMax2(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        nums=set(nums) 
+        if len(nums)<3:
+            return max(nums)
+        nums.remove(max(nums))
+        nums.remove(max(nums))
+        return max(nums)
