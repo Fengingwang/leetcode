@@ -1,0 +1,25 @@
+# Time:  O(n)
+# Space: O(1)
+# Given an unsorted array of integers, find the length of longest continuous increasing subsequence (subarray)
+# Input: [1,3,5,4,7] Output: 3
+# Explanation: [1,3,5], its length is 3. 
+# Even though [1,3,5,7] is also an increasing subsequence, it is not a continuous 
+# Input: [2,2,2,2,2] Output: 1
+# Explanation: The longest continuous increasing subsequence is [2], its length is 1
+
+class Solution(object):
+    def findLengthOfLCIS(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        ans = cnt = 0
+        last = None
+        for n in nums:
+            if n > last:
+                cnt += 1
+            else:
+                ans = max(ans, cnt)
+                cnt = 1
+            last = n
+        return max(ans, cnt)
