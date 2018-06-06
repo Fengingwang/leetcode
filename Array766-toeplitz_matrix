@@ -1,0 +1,33 @@
+# Time:  O(m * n)
+# Space: O(1)
+# A matrix is Toeplitz if every diagonal from top-left to bottom-right has the same element.
+# Now given an M x N matrix, return True if and only if the matrix is Toeplitz
+# Input: matrix = [[1,2,3,4],[5,1,2,3],[9,5,1,2]] Output: True
+# Explanation:
+# 1234
+# 5123
+# 9512
+# In the above grid, the diagonals are
+# "[9]", "[5, 5]", "[1, 1, 1]", "[2, 2, 2]", "[3, 3]", "[4]",
+# and in each diagonal all elements are the same, so the answer is True
+# 方法一： 这个题目如果按照题目意思解答，求出矩阵的所有对角线，情况很复杂。所以使用的是直接两两进行比较的方式。判断每行元素的每个元素和其右下角的元素是否相等，如果不等就返回False 全部相等返回True
+# 方法二： 只要观察到第二行的后面部分 和 第一行的前面部分相等即可。使用切片和一个for循环就能解决问题。
+class Solution(object):
+    def isToeplitzMatrix(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: bool
+        """
+        for row in xrange(len(matrix) - 1):
+            for col in xrange(len(matrix[0]) - 1):
+                if matrix[row][col] != matrix[row+1][col+1]:
+                    return False
+        return True
+
+class Solution(object):
+    def isToeplitzMatrix(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: bool
+        """
+        return all(matrix[row+1][1:] == matrix[row][:-1] for row in range(len(matrix)-1))
