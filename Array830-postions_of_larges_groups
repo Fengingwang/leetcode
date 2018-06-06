@@ -1,0 +1,45 @@
+# Time:  O(n)
+# Space: O(1)
+# In a string S of lowercase letters, these letters form consecutive groups of the same character
+# For example, a string like S = "abbxxxxzyy" has the groups "a", "bb", "xxxx", "z" and "yy"
+# Call a group large if it has 3 or more characters
+# We would like the starting and ending positions of every large group
+# The final answer should be in lexicographic order
+# Input: "abbxxxxzzy" Output: [[3,6]]
+# Explanation: "xxxx" is the single large group with starting  3
+# and ending positions 6.
+# Input: "abc" Output: []
+# Explanation: We have "a","b" and "c" but no large group.
+# Input: "abcdddeeeeaabbbcd" Output: [[3,5],[6,9],[12,14]]
+# For every groups, find its start index i and end index j - 1 and the Group length is j - i, if >= 3, add (i, j) to result
+
+class Solution:
+    def largeGroupPositions(self, S):
+        """
+        :type S: str
+        :rtype: List[List[int]]
+        """
+        i, j, N = 0, 0, len(S)
+        res = []
+        while i < N:
+            while j < N and S[j] == S[i]: j += 1
+            if j - i >= 3: res.append((i, j - 1))
+            i = j
+        return res
+
+class Solution:
+    def largeGroupPositions(self, S):
+        """
+        :type S: str
+        :rtype: List[List[int]]
+        """
+        i   = 0
+        res = []
+        while i < len(S):
+            j = i + 1
+            while j < len(S) and S[j] == S[i]:
+                j = j + 1
+            if (j - i) > 2:
+                res.append([i, j - 1])
+            i = j
+        return res
