@@ -1,0 +1,46 @@
+# Time:  O(n)
+# Space: O(1)
+# In a given integer array nums, there is always exactly one largest element
+# Find whether the largest element in the array is at least twice as much as every other number in the array
+# If it is, return the index of the largest element, otherwise return -1
+# Input: nums = [3, 6, 1, 0] Output: 1
+# Explanation: 6 is the largest integer, and for every other number in the array x,
+# 6 is more than twice as big as x.  The index of value 6 is 1, so we return 1.
+# Input: nums = [1, 2, 3, 4] Output: -1
+# Explanation: 4 isn not at least as big as twice the value of 3, so we return -1.
+# 思路： 扫描一遍数组，记录最大值与第二大的值，如果最大的是第二大的两倍以上，那么返回索引即可.本来想的是找到最大值，然后找到其索引，弹出该值之后再求最大值。这是明显不对的。
+# 第一，如果nums只有一个元素这方法不可以。第二，如果有重复的最大值，去除一个之后还有其他的相等的最大值。
+# 根据题目的两个note，可以看出nums都是自然数，找到最大值之后，把所有等于最大值的元素改成负数即可。这样就一定成了最小的数，不影响次大值的判断，也避免了nums只有一个元素的情况。
+class Solution(object):
+    def dominantIndex(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        largest = max(nums)
+        index = nums.index(largest)
+        for i in range(len(nums)):
+            if nums[i] == largest:
+                nums[i] = -1
+        second = max(nums)
+        return index if largest >= second * 2 else -1
+
+class Solution(object):
+    def dominantIndex(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        m = max(nums)
+        if all(m >= 2*x for x in nums if x != m):
+            return nums.index(m)
+        return -1
+
+class Solution(object):
+    def dominantIndex(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        maxn = max(nums)
+        return [-1, nums.index(maxn)][sum(maxn < 2 * n for n in nums) == 1]
