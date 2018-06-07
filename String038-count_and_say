@@ -1,0 +1,52 @@
+# Time:  O(n * 2^n)
+# Space: O(2^n)
+# The count-and-say sequence is the sequence of integers beginning as follows:
+# 1, 11, 21, 1211, 111221, ...
+# 1 is read off as "one 1" or 11
+# 11 is read off as "two 1s" or 21
+# 21 is read off as "one 2, then one 1" or 1211
+# Given an integer n, generate the nth sequence
+# Note: The sequence of integers will be represented as a string
+# 这个问题重点首先是要读懂题目。然后在想这个过程的时候，你可能会想的比较复杂，
+# 比如，会不会出现连续十几个一样的数字，比如1111111111，读作“ten 1”，然后转换成101。 实际上，有大神已经证明，这个序列里的数不会超过4。
+
+# 根据题目描述的过程写代码，完全遵照规则写就行了。所以要用到三个循环，最外层是生成第几个序列；中间层用于遍历一个序列；最内层找出连续相同的几个数字
+class Solution(object):
+    def countAndSay(self, n):
+        """
+        :type n: int
+        :rtype: str
+        """
+        res = '1'
+        for i in xrange(n-1):
+            new_res = ''
+            j = 0
+            while j < len(res):
+                count = 1
+                while j < len(res)-1 and res[j] == res[j+1]:
+                    j = j + 1
+                    count = count + 1
+                j = j + 1
+                new_res = new_res + str(count) + res[j-1]
+            res = new_res
+        return res
+
+# 当然，其实最内层和中间层不需要分开写，用一个pre变量存放上一个字符即可
+class Solution(object):
+    def countAndSay(self, n):
+        """
+        :type n: int
+        :rtype: str
+        """
+        res = '1'
+        for i in xrange(n-1):
+            new_res, pre, count = '', res[0], 0
+            for j in xrange(len(res)):
+                if res[j] == pre:
+                    count += 1
+                else:
+                    new_res += str(count) + pre
+                    count = 1
+                    pre = res[j]
+            res = new_res + str(count) + pre
+        return res
