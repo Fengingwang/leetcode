@@ -1,0 +1,60 @@
+# Time:  O(n)
+# Space: O(1)
+# The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this:
+# (you may want to display this pattern in a fixed font for better legibility)
+# P   A   H   N
+# A P L S I I G
+# Y   I   R
+# And then read line by line: "PAHNAPLSIIGYIR"
+# Write the code that will take a string and make this conversion given a number of rows:
+# string convert(string text, int nRows);
+# convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR"
+
+# 思路一: 模拟书写zigzag字符串的过程 fill one by one vertically。创建一个二维数组，里面有row个数组。
+# 设置好step=+1，一步步到了第3（row）步，将step设置为-1，往回走一步，再往回走一步，只到回到第一步，再将step设置为+1，如此循环。
+# 最后将二维数组内list合并
+class Solution(object):
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+        if numRows == 1 or numRows >= len(s):
+            return s
+        zigzag = [[] for x in range(numRows)]  # 创建一个二维数组[[],[],[]]
+        row, step = 0, 1
+        for c in s:
+            zigzag[row] += c,
+            if row == 0:
+                step = 1
+            elif row == numRows - 1:
+                step = -1
+            row += step
+        result = ''
+        for i in range(len(zigzag)): 
+            result += ''.join(zigzag[i])  # list拼接为字符串 
+        return result
+
+# 思路二 如果稍微考虑的数学一点，那么s中的第i个字符（下标从第0个开始），如果按照zigzag书写方式会出现在的行数为（行数为0到numRows-1行）： 
+# i % (2 * numRows - 2), if i % (2 * numRows - 2) < numRows 
+# 2 * numRows - 2 - (i % (2 * numRows - 2)), if i % (2 * numRows - 2) >= numRows 
+# 有了这个结果，对于任意一个位置的字符我们都知道它应该在第几行。下面的代码仍然是顺序扫描原字符串s，当然也可以有别的办法。
+
+class Solution(object):
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+        if numRows <= 1 or numRows >= len(s):
+            return s
+        arr = [''] * numRows
+        for i in xrange(len(s)):
+            tmp = i % (numRows + numRows - 2)
+            if tmp < numRows:
+                arr[tmp] += s[i]
+            else:
+                arr[numRows + numRows - 2 - tmp] += s[i]
+        return ''.join(arr)
