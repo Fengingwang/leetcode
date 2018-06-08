@@ -1,0 +1,55 @@
+# Time:  O(n)
+# Space: O(1)
+# Given an array of characters, compress it in-place
+# The length after compression must always be smaller than or equal to the original array
+# Every element of the array should be a character (not int) of length 1
+# After you are done modifying the input array in-place, return the new length of the array
+# Input:
+# ["a","a","b","b","c","c","c"]
+# Output:
+# Return 6, and the first 6 characters of the input array should be: ["a","2","b","2","c","3"]
+# Explanation:
+# "aa" is replaced by "a2". "bb" is replaced by "b2". "ccc" is replaced by "c3".
+# Example 2:
+# Input:
+# ["a","b","b","b","b","b","b","b","b","b","b","b","b"]
+# Output:
+# Return 4, and the first 4 characters of the input array should be: ["a","b","1","2"].
+# Explanation:
+# Since the character "a" does not repeat, it is not compressed "bbbbbbbbbbbb" is replaced by "b12"
+# Notice each digit has it is own entry in the array.
+
+# 说明：
+# 要求在原本vector上面修改，然后输出最后vector的长度。空间复杂度是O(1)。
+# 比较综合，考察多种操作。做法如下：
+# 从vector首位开始处理，把碰到的第一个数记录下来，后续的数逐个跟它比较，如果相等就把后续的数删去，顺便记录删了几个数。
+# 然后如果确实删去了数，那么把删去的数的个数+1，拆成一位一位的，插入在vector中，要注意插入的位置。
+# 如果没有删去重复的后续的数，也就是记录下来的数只出现了一次，那么继续处理下一个数，仍然记录下来，覆盖掉原本的数。
+# 直到vector所有字符都处理完毕。
+# 疑惑为什么要删除和插入vector中的元素，因为题目要求要in-place处理，而且样例也有要求原vector要处理。
+# wo zhen de mei kan dong, zan shi bu xiang kan, zai shuo ba
+
+class Solution(object):
+    def compress(self, chars):
+        """
+        :type chars: List[str]
+        :rtype: int
+        """
+        anchor, write = 0, 0
+        for read, c in enumerate(chars):
+            if read+1 == len(chars) or chars[read+1] != c:
+                chars[write] = chars[anchor]
+                write += 1
+                if read > anchor:
+                    n, left = read-anchor+1, write
+                    while n > 0:
+                        chars[write] = chr(n%10+ord('0'))
+                        write += 1
+                        n /= 10
+                    right = write-1
+                    while left < right:
+                        chars[left], chars[right] = chars[right], chars[left]
+                        left += 1
+                        right -= 1
+                anchor = read+1
+        return write
