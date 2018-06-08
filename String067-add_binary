@@ -1,0 +1,51 @@
+# Time:  O(n)
+# Space: O(1)
+# Given two binary strings, return their sum (also a binary string).
+# a = "11"
+# b = "1"
+# Return "100"
+# 给定两个二进制字符串，返回它们的和（也是二进制字符串）
+
+# 思路: 从两个字符串的最低位开始，一位一位的进行二进制相加，并保存进位，最终可以得到两者的和的字符串
+class Solution(object):
+    def addBinary(self, a, b):
+        """
+        :type a: str
+        :type b: str
+        :rtype: str
+        """
+        res = ''
+        i, j, plus = len(a)-1, len(b)-1, 0
+        while i>=0 or j>=0 or plus==1:
+            plus += int(a[i]) if i>= 0 else 0
+            plus += int(b[j]) if j>= 0 else 0
+            res = str(plus % 2) + res
+            i, j, plus = i-1, j-1, plus/2
+        return res
+
+# 思路: 用递归实现，要注意，当两个加数都是1时要进位
+class Solution(object):
+    def addBinary(self, a, b):
+        """
+        :type a: str
+        :type b: str
+        :rtype: str
+        """
+        if not a or not b:
+            return a if a else b
+        if a[-1] == '1' and b[-1] == '1':
+            return self.addBinary(self.addBinary(a[:-1], b[:-1]), '1') + '0'
+        elif a[-1] == '0' and b[-1] == '0':
+            return self.addBinary(a[:-1], b[:-1]) + '0'
+        else:
+            return self.addBinary(a[:-1], b[:-1]) + '1'
+
+# 思路: 利用Python的进制转换函数，先将两个加数转成10进制，再把和转换成二进制返回即可。虽然速度还挺快的，但这么做忽略了可能的大整数相加的细节（因为Python帮你处理了）
+class Solution(object):
+    def addBinary(self, a, b):
+        """
+        :type a: str
+        :type b: str
+        :rtype: str
+        """
+        return bin(int(a, 2) + int(b, 2))[2:]
