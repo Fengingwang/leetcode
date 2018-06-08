@@ -1,0 +1,65 @@
+# Time:  O(logn)
+# Space: O(1)
+# Given an integer, write an algorithm to convert it to hexadecimal
+# For negative integer, two’s complement method is used
+# Note:
+# All letters in hexadecimal (a-f) must be in lowercase
+# The hexadecimal string must not contain extra leading 0. If the number is zero, it is represented by a single zero character '0'; 
+# otherwise, the first character in the hexadecimal string will not be the zero character
+# The given number is guaranteed to fit within the range of a 32-bit signed integer
+# Input:
+# 26
+# Output:
+# "1a"
+# Input:
+# -1
+# Output:
+# "ffffffff"
+# 将数字转化为16进制字符串，负数采用补码表示。不允许使用系统函数。
+# 抛开题目，我们应该都会把一个十进制数转为十六进制数，比如50，转为十六进制数，我们先对50除以16，商3余2，那么转为十六进制数就是32。
+
+# 只管想法就是把数字/16，然后从数组中取字符组成字符串。但这个只对正数有用，负数没法用。对负数的处理不好办。
+# 刚开始想用Integer.MAX_VALUE减去负数得到整数，再转成16进制，但是，尝试了之后，正数的最大值得符号位是0，因此这个思路不同。
+# 然后就是想到位运算。>>>的作用是无符号右移。每次右移4位就是相当于除以16，然后再把这个结果对16求余，即可。无论正负都可。因为这就是正确的每四位数划分求对应16进制数的方式。
+# 这里有个技巧，就是hexs[(16 + num % 16) % 16]，这样做的目的就是使正负数都能统一计算16进制，不会导致数组溢出。
+
+# ok，很清晰，正数用除数取余处理。负数处理成正数再去处理。
+# 负数如何处理？这里说了，最大是32位整数，那么就加一个32位的最大值就ok了。
+def toHex(self, num):
+    ret = ''
+    map = ('0', '1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+    if num == 0:
+        return '0'
+    if num < 0:
+        num += 2**32
+    while num > 0 :
+        num, val = divmod(num, 16)
+        ret += map[val]
+    return ret[::-1]
+
+# 处理数字问题，不用位操作简直毁天灭地。4bits表示一个数字，按照2进制处理呗。
+class Solution(object):
+    def toHex(self, num):
+        """
+        :type num: int
+        :rtype: str
+        """
+        if num==0: return '0'
+        mp = '0123456789abcdef'  # like a map
+        ans = ''
+        for i in range(8):
+            n = num % 16       # this means num & 1111b
+            c = mp[n]          # get the hex char 
+            ans = c + ans
+            num = num >> 4
+        return ans.lstrip('0')  #strip leading zeroes
+
+# note: at max we have 32 bit integer, so 8 iterations of computing 4 bits in each iteration == 32 bits
+
+# 十进制 → 十六进制
+# 方法1：除16取余法，即每次将整数部分除以16，余数为该位权上的数，而商继续除以16，余数又为上一个位权上的数，这个步骤一直持续下去，直到商为0为止，最后读数时候，从最后一个余数起，一直到最前面的一个余数。
+# 例：将十进制的(796)D转换为十六进制的步骤如下：
+# 1. 将商796除以16，商49余数为12，对应十六进制的C；
+# 2. 将商49除以16，商3余数为1；
+# 3. 将商3除以16，商0余数为3；
+# 4. 读数，因为最后一位是经过多次除以16才得到的，因此它是最高位，读数字从最后的余数向前读，31C，即(796)D=(31C)H。
