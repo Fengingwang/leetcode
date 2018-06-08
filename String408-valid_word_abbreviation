@@ -1,0 +1,59 @@
+# Time:  O(n)
+# Space: O(1)
+# Given a non-empty string s and an abbreviation abbr, return whether the string matches with the given abbreviation
+# A string such as "word" contains only the following valid abbreviations:
+# ["word", "1ord", "w1rd", "wo1d", "wor1", "2rd", "w2d", "wo2", "1o1d", "1or1", "w1r1", "1o2", "2r1", "3d", "w3", "4"]
+# Note: Assume s contains only lowercase letters and abbr contains only lowercase letters and digits
+# 要注意两点：1。连续的digit要组合为一个number 2。number不能有前导0，且number不为0
+# simulate how to form the abb from the original word
+
+class Solution(object):
+    def validWordAbbreviation(self, word, abbr):
+        """
+        :type word: str
+        :type abbr: str
+        :rtype: bool
+        """
+        i , digit = 0, 0
+        for c in abbr:
+            if c.isdigit():
+                if digit == 0 and c == '0':
+                    return False
+                digit *= 10
+                digit += int(c)
+            else:
+                if digit:
+                    i += digit
+                    digit = 0
+                if i >= len(word) or word[i] != c:
+                    return False
+                i += 1
+        if digit:
+            i += digit
+
+        return i == len(word)
+
+class Solution(object):
+    def validWordAbbreviation(self, word, abbr):
+        """
+        :type word: str
+        :type abbr: str
+        :rtype: bool
+        """
+        i = 0
+        j = 0
+        num = 0
+        while i < len(word) and j < len(abbr):
+            if abbr[j] in '0123456789':
+                if num == 0 and abbr[j] == '0': return False
+                num = num * 10 + int(abbr[j])
+                j += 1
+            elif num > 0:
+                i += num
+                num = 0
+            elif word[i] != abbr[j]:
+                return False
+            else:
+                i += 1
+                j += 1
+        return i + num == len(word) and j == len(abbr)
