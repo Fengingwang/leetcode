@@ -21,6 +21,20 @@
 # - S contains only uppercase, lowercase and spaces Exactly one space between each word
 # - 1 <= S.length <= 100.
 
+# 如果单词首字母是元音，在单词末尾添加ma
+# 否则，将单词首字母移动至末尾，并添加ma
+# 对于第i个单词，在其末尾添加i个a
+
+def toGoatLatin(self, S):
+        vowel = set('aeiouAEIOU')
+        def latin(w, i):
+            if w[0] not in vowel:
+                w = w[1:] + w[0]
+            return w + 'ma' + 'a' * (i + 1)
+        return ' '.join(latin(w, i) for i, w in enumerate(S.split()))
+
+def toGoatLatin(self, S):
+        return ' '.join((w if w[0].lower() in 'aeiou' else w[1:] + w[0]) + 'ma' + 'a' * (i + 1) for i, w in enumerate(S.split()))
 
 class Solution(object):
     def toGoatLatin(self, S):
@@ -34,4 +48,5 @@ class Solution(object):
                 if word[0] not in vowel:
                     word = word[1:] + word[:1]
                 yield word + 'ma' + 'a'*i
-        return " ".join(convert(S))
+        return " ".join(convert(S)
+
