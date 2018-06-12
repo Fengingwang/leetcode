@@ -1,0 +1,32 @@
+# We are given two strings, A and B.
+# A shift on A consists of taking string A and moving the leftmost character to the rightmost position
+# For example, if A = 'abcde', then it will be 'bcdea' after one shift on A 
+# Return True if and only if A can become B after some number of shifts on A
+# Input: A = 'abcde', B = 'cdeab'
+# Output: true
+# Input: A = 'abcde', B = 'abced'
+# Output: false
+# Note: - A and B will have length at most 100
+# 判断字符串A执行一定次数的循环移位操作之后能不能变成B
+
+# 在python中很容易使用切片操作达到循环移位的做法。只需要循环A长度次，看看每个结果即是所有的可能的移位结果
+class Solution(object):
+    def rotateString(self, A, B):
+        """
+        :type A: str
+        :type B: str
+        :rtype: bool
+        """
+        for i in range(len(A)):
+            if A[i:] + A[:i] == B:
+                return True
+        return False
+
+
+# Time:  O(n)
+# Space: O(1)
+# Rabin-Karp Algorithm (rolling hash)
+
+# Time:  O(n)
+# Space: O(n)
+# KMP algorithm
