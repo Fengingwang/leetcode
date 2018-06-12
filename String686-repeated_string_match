@@ -1,0 +1,39 @@
+# Time:  O(n + m)
+# Space: O(1)
+# Given two strings A and B, find the minimum number of times A has to be repeated such that B is a substring of it
+# If no such solution, return -1.
+# For example, with A = "abcd" and B = "cdabcdab".
+# Return 3, because by repeating A three times (“abcdabcdabcd”), B is a substring of it;
+# and B is not a substring of A repeated two times ("abcdabcd").
+# 判断当A重复一定次数之后，B能否成为其子串。
+# 解题方法: 自己想了很久没想出怎么做，可是看到别人的解法后，立马就懂了：当A重复一定次数后，长度比B长了，那么就可以停止了！
+# 因为如果这种情况下B都不是A的子串，那么循环再多也没用。。因为对于B来说，A所有可能的重复都已经出现了。
+
+class Solution(object):
+    def repeatedStringMatch(self, A, B):
+        times = -(-len(B) // len(A)) # Equal to ceil(len(b) / len(a))
+        for i in range(2):
+          if B in (A * (times + i)):
+            return times + i
+        return -1
+
+# Note: python的除会向下取整，所以多加几次，比如+3。（+2会错误）
+class Solution(object):
+    def repeatedStringMatch(self, A, B):
+        """
+        :type A: str
+        :type B: str
+        :rtype: int
+        """
+        na, nb = len(A), len(B)
+        times = nb / na + 3
+        for i in range(1, times):
+            if B in A * i:
+                return i
+        return -1
+
+class Solution(object):
+    def repeatedStringMatch(self, A, B):
+        t = -(-len(B) // len(A)) # Equal to ceil(len(b) / len(a))
+        return t * (B in A * t) or (t + 1) * (B in A * (t + 1)) or -1
+
