@@ -1,0 +1,42 @@
+# Time:  O(n)
+# Space: O(1)
+# Give a string s, count the number of non-empty (contiguous) substrings with same number of 0 and 1, 
+# and all the 0 and all the 1 in these substrings are grouped consecutively
+# Substrings that occur multiple times are counted the number of times they occur
+# Input: "00110011" Output: 6
+# Explanation: There are 6 substrings that have equal number of consecutive 1 and 0:
+#              "0011", "01", "1100", "10", "0011", "01"
+# Notice that some of these substrings repeat and are counted the number of times they occur
+# Also, "00110011" is not a valid substring because all the 0 (or 1) are not grouped together
+# Input: "10101" Output: 4
+# Explanation: There are 4 substrings: "10", "01", "10", "01" that have equal number of consecutive 1 and 0.
+
+# An intuitive approach will be to group the binary string into chunks of 0s and 1s (sort of like compressing)
+# The answer will be simply to sum the min of length of neighboring chunks together
+# '00001111' => [4, 4] => min(4, 4) => 4
+# '00110' => [2, 2, 1] => min(2, 2) + min(2, 1) => 3
+# '10101' => [1, 1, 1, 1, 1] => 4
+
+class Solution(object):
+    def countBinarySubstrings(self, s):
+        chunks, consecutive, res = [], 1, 0
+        for i in range(1, len(s)):
+            if s[i] == s[i - 1]:
+                consecutive += 1
+            else:
+                chunks.append(consecutive)
+                consecutive = 1
+        chunks.append(consecutive)
+        for i in range(1, len(chunks)):
+            res += min(chunks[i], chunks[i - 1])
+        return res
+
+# 这解法绝了: one comment reads my mind: 你他妈的为什么这么吊
+# First, I count the number of 1 or 0 grouped consecutively, eg, "0110001111" will be [1, 2, 3, 4]
+# Second, for any possible substrings with 1 and 0 grouped consecutively, the number of valid substring will be the minimum number of 0 and 1
+# eg "0001111", will be min(3, 4) = 3, ("01", "0011", "000111")
+
+def countBinarySubstrings(self, s):
+        s = [len(i) for i in s.replace('01', '0 1').replace('10', '1 0').split()]
+        return sum(min(a, b) for a, b in zip(s, s[1:]))
+
