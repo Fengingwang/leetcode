@@ -1,0 +1,97 @@
+# Time:  O(n)
+# Soace: O(1)
+# Given a non-empty string s, you may delete at most one character
+# Judge whether you can make it a palindrome
+# Input: "aba" Output: True
+# Input: "abca" Output: True
+# Explanation: You could delete the character 'c'.
+# The string will only contain lowercase characters a-z. The maximum length of the string is 50000.
+# 给定一个非空字符串s，至多删除一个字符。判断是否可以组成回文。
+
+# 解题思路: 双指针（Two Pointers）
+# lo, hi分别指向s的左右两侧，向中心移动
+# 当s[lo] != s[hi]时，判断删掉lo或者hi时，剩余字符串是否为回文
+
+class Solution(object):
+    def validPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        isPalindrome = lambda s: s == s[::-1]
+        strPart = lambda s, x: s[:x] + s[x + 1:]
+        size = len(s)
+        lo, hi = 0, size - 1
+        while lo < hi:
+            if s[lo] != s[hi]:
+                return isPalindrome(strPart(s, lo)) or isPalindrome(strPart(s, hi))
+            lo += 1
+            hi -= 1
+        return True
+
+# 解题思路
+# 首先，如果字符串s长度为0或者1，直接返回true。
+# 思路一：既然要求最多只删除1个字符，那就设定count计数。如果在判断回文的循环过程中，发生不相等，则count++。最后判断count是否小于2即可。首先初始化指针i=0，j=s.length()-1。
+# 第一个循环i小于j，判断s[i]与s[j]，如果不相等，则j不动，i先往后走一个，即i++（j往前走在下一个循环中），并且count++。如果相等，则i++，j–。循环结束，如果count小于2，则返回true。
+# 第二个循环，循环之前，指针i=0，j=s.length()-1，count=0恢复原值。进入循环i小于j，判断s[i]与s[j]，如果不相等，则i不动，j往前走一个，即j–，并且count++。如果相等，则i++，j–。 循环结束，如果count小于2，则返回true。
+# 最后返回false。
+# 思路二：等同于思路一，不过利用递归。
+# 设置函数判断是否回文。在判断回文的函数中，有4个参数，参数1是字符串s，参数2是start起始位置，参数3是end结束位置，参数4是count计数。
+# 在函数中，如果count大于1，则返回false。进入循环start小于end，判断s[start]与s[end]是否相等，如果不等，则直接break。否则start++,end–。
+# 循环结束后，如果start==end（表示奇数个的字符串是回文）或者start==end+1（表述偶数个的字符串是回文），则返回true。
+# 然后返回递归调用（s，start+1，end，count+1）或（s，start，end-1，count+1）的结果。然后在函数中调用判断是否回文的函数即可。
+
+# 思路一代码（459ms）
+class Solution(object):
+    def validPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        if len(s)<2:
+            return True
+        count=0
+        i=0
+        j=len(s)-1
+        while i<j:
+            if s[i]!=s[j]:
+                i+=1
+                count+=1
+            else:
+                i+=1
+                j-=1
+        if count<2:
+            return True
+        count=0
+        i=0
+        j=len(s)-1
+        while i<j:
+            if s[i]!=s[j]:
+                j-=1
+                count+=1
+            else:
+                i+=1
+                j-=1
+        if count<2:
+            return True  
+        return False
+
+# 思路二代码（255ms）
+class Solution1(object):
+    def validPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        def ispalindrome(s,start,end,count):
+            if count>1:
+                return False
+            while start<end:
+                if s[start]!=s[end]:
+                    break
+                start+=1
+                end-=1
+            if start==end or start==end+1:
+                return True
+            return ispalindrome(s, start+1, end, count+1) or ispalindrome(s, start, end-1, count+1)
+        return ispalindrome(s, 0, len(s)-1, 0)
