@@ -1,0 +1,31 @@
+# Time:  O(n)
+# Space: O(1)
+# Initially, there is a Robot at position (0, 0). Given a sequence of its moves,
+# judge if this robot makes a circle, which means it moves back to the original place
+# The move sequence is represented by a string, each move is represent by a character
+# The valid robot moves are R (Right), L (Left), U (Up) and D (down).
+# The output should be true or false representing whether the robot makes a circle
+# Input: "UD" Output: true
+# Input: "LL" Output: false
+# 这题的意思就是一个机器人在（0,0）点，经过上下左右移动后是否回到原点。上下左右移动通过字符串操作。
+
+class Solution(object):
+    def judgeCircle(self, moves):
+        """
+        :type moves: str
+        :rtype: bool
+        """
+        v, h = 0, 0
+        for move in moves:
+            if move == 'U':
+                v += 1
+            elif move == 'D':
+                v -= 1
+            elif move == 'R':
+                h += 1
+            elif move == 'L':
+                h -= 1
+        return v == 0 and h == 0
+
+def judgeCircle(self, moves):  
+    return moves.count('L') == moves.count('R') and moves.count('U') == moves.count('D')  
