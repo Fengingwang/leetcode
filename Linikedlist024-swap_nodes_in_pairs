@@ -1,0 +1,37 @@
+# Time:  O(n)
+# Space: O(1)
+# Given a linked list, swap every two adjacent nodes and return its head
+# eg, Given 1->2->3->4, you should return the list as 2->1->4->3.
+# Your algorithm should use only constant space
+# You may not modify the values in the list, only nodes itself can be changed
+# 解题思路
+# 比较常见的链表操作。下面看一下典型情况，如要交换链表中A->B->C->D中的B和C需要做如下操作：
+# 将A指向C
+# 将B指向D
+# 将C指向B
+# 在头节点之前加一个假节点就可以使所有的交换都符合上面的情况。
+
+# Definition for singly-linked list
+class ListNode(object):
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+
+class Solution(object):
+    def swapPairs(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+        prev = ListNode(-1)
+        prev.next = head
+        temp = prev
+        while temp.next and temp.next.next:
+            node1 = temp.next # A 
+            node2 = temp.next.next # B
+            temp.next = node2 # Fake node -> B
+            node1.next = node2.next # A->C 
+            node2.next = node1 # B->A
+            temp = temp.next.next # 跳过两个to become one step before C 
+        return prev.next
