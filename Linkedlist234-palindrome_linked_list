@@ -1,0 +1,62 @@
+# Given a singly linked list, determine if it is a palindrome
+# Follow up: Could you do it in O(n) time and O(1) space?
+#
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+# 思路一: 考虑到单链表缺失从后向前的信息，如果能得到双向信息将很容易判断回文。故考虑将单链表的节点值记录到一个数组中，判断数组是否回文
+# 代码（时间 O(n)，空间O(n)）
+class Solution(object):
+    def isPalindrome(self, head):
+        """
+        :type head: ListNode
+        :rtype: bool
+        """
+        if not head or not head.next:
+            return True
+
+        tmp_list = []
+        while head:
+            tmp_list.append(head.val)
+            head = head.next
+
+        length = len(tmp_list)
+        for i in range(0, length/2):
+            if tmp_list[i] != tmp_list[length-i-1]:
+                return False
+        return True
+# 思路二，判断回文主要是前半部分和后半部分的比较，若能将后半部分反转（仍然是单链表），则可以方便的判断回文。 
+# 代码（时间 O(n)，空间O(1)）
+
+class Solution:
+    def isPalindrome(self, head):
+        reverse, fast = None, head
+
+        # Reverse the first half part of the list
+        while fast and fast.next:
+            fast = fast.next.next
+            head.next, reverse, head = reverse, head, head.next
+
+        # If the number of the nodes is odd, set the head of the tail list to the next of the median node
+        tail = head.next if fast else head
+
+        # Compare the reversed first half list with the second half list, And restore the reversed first half list
+        is_palindrome = True
+        while reverse:
+            is_palindrome = is_palindrome and reverse.val == tail.val
+            reverse.next, head, reverse = head, reverse, reverse.next
+            tail = tail.next
+        return is_palindrome
+
+# 函数 reverseList() 方法只是反转链表的一种方法，空间复杂度 O(1) 
+def reverseList(self, head):
+        new_head = None
+        while head:
+            p = head
+            head = head.next
+            p.next = new_head
+            new_head = p
+        return new_head
