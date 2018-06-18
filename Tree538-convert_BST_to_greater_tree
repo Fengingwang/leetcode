@@ -1,0 +1,44 @@
+# Given a Binary Search Tree (BST), convert it to a Greater Tree such that every key of
+# the original BST is changed to the original key plus sum of all keys greater than the original key in BST
+# Input: The root of a Binary Search Tree like this:
+#               5
+#             /   \
+#           2     13
+# Output: The root of a Greater Tree like this:
+#              18
+#             /   \
+#           20     13
+
+# 解题思路： “右 - 根 - 左”顺序遍历BST
+# 二分查找树的特点是中序遍历的结果是一个升序序列。而我们做加法时最简单的顺序就是从最大的值开始，降序地做下去。
+# 在树中对应的就是最右的叶子节点开始，因为该节点是最大的。如果对二分查找树有一定的敏感度的话，应该很容易就发现一个性质：
+# 如果我们按照中序遍历的逆序，即先右子节点，再父节点，最后左子节点顺序遍历的话，刚好就能降序地访问每一个节点。
+# 比如例子中就会是以13，5，2的顺序访问，这样我们每访问一个节点，就记录下到该节点的和，并在访问下一节点时将该和值加到节点的值上。
+# 以例子说明： 
+# 初始sum为0。 
+# 访问到13，更新节点值为13+sum=13+0=13，sum更新为sum+13=0+13=13； 
+# 访问到5，更新节点值为5+sum=5+13=18，sum更新为sum+5=13+5=18; 
+# 访问到2，更新节点值为2+sum=2+18=20，sum更新为sum+2=18+2=20;
+
+# Definition for a binary tree node
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def convertBST(self, root):
+        """
+        :type root: TreeNode
+        :rtype: TreeNode
+        """
+        self.total = 0
+        def traverse(root):
+            if not root: return
+            traverse(root.right)
+            root.val += self.total
+            self.total = root.val
+            traverse(root.left)
+        traverse(root)
+        return root
