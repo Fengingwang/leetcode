@@ -1,0 +1,38 @@
+# Time:  O(logn) = O(1)
+# Space: O(1)
+# Reverse digits of an integer
+# Example1: x = 123, return 321
+# Example2: x = -123, return -321
+# click to show spoilers.
+# Have you thought about this?
+# If the integer last digit is 0, what should the output be? ie, cases such as 10, 100
+# Did you notice that the reversed integer might overflow? Assume the input is a 32-bit integer,
+# then the reverse of 1000000003 overflows and how should you handle such cases?
+
+# 思路方法: 这里Python处理整数不会主动溢出实际上会给解题带来麻烦，需要特殊处理。
+# 思路一: 循环通过对10取模得到尾部数字，一步步乘10构造新的翻转后的整数即可。然而要注意首先判断原数字的正负，最后还要判断结果是否溢出。
+
+class Solution(object):
+    def reverse(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+        flag = 1 if x >= 0 else -1
+        new_x, x = 0, abs(x)
+        while x:
+            new_x = 10 * new_x + x % 10
+            x /= 10
+        new_x = flag * new_x
+        return new_x if new_x < 2147483648 and new_x >= -2147483648 else 0
+
+# 思路二: 利用Python的字符串反转操作来实现对整数的反转，反转后的字符串要重新转换为整数。同上面一样，要注意正负和溢出情况。
+class Solution(object):
+    def reverse(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+        x = int(str(x)[::-1]) if x >= 0 else - int(str(-x)[::-1])
+        return x if x < 2147483648 and x >= -2147483648 else 0
+
