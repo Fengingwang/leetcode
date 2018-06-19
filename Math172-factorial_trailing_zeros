@@ -1,0 +1,35 @@
+# Time:  O(logn) = O(1)
+# Space: O(1)
+# Given an integer n, return the number of trailing zeroes in n!
+# Note: Your solution should be in logarithmic time complexity
+# 题目翻译: 给定一个整数n，返回n!尾部0的个数。你的解法的时间复杂度要控制在O(logn)。
+# 思路方法:
+# 所有的尾部的0可以看做都是2*5得来的，所以通过计算所有的因子中2和5的个数就可以知道尾部0的个数。实际上，2的个数肯定是足够的，所以只需计算5的个数即可。 
+# 要注意，25=5*5是有两个5的因子；125=5*5*5有3个5的因子。
+# 比如，计算135!末尾0的个数。 
+# 135/5 = 27，说明135以内有27个5的倍数；
+# 27/5=5，    说明135以内有5个25的倍数；
+# 5/5=1，     说明135以内有1个125的倍数。
+# 当然其中有重复计数，算下来135以内因子5的个数为27+5+1=33。
+
+# 思路一: 迭代求解。
+class Solution(object):
+    def trailingZeroes(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        res = 0
+        while n > 0:
+            n = n/5
+            res += n
+        return res
+
+# 思路二: 递归求解。
+class Solution(object):
+    def trailingZeroes(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        return 0 if n == 0 else n / 5 + self.trailingZeroes(n / 5)
