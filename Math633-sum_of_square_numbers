@@ -1,0 +1,40 @@
+# Time:  O(sqrt(c) * logc)
+# Space: O(1)
+# Given a non-negative integer c, your task is to decide
+# whether there are two integers a and b such that a^2 + b^2 = c
+# Input: 5
+# Output: True
+# Explanation: 1 * 1 + 2 * 2 = 5
+# Input: 3
+# Output: False
+# 思路： 题目大意就是求一个非负整数能否拆解成两个整数的平方之和，由于int类型的范围 -2147483648～2147483647，所以可以预感到如果是o(n)的复杂度的算法（代码一），
+# 而且又是python写的，超时的可能性极大！
+# 如果是把问题转换成判断c-a^2是否是一个平方数，则可以把复杂度降为o(n^0.5)，详见代码二。
+
+# 代码一：o(n)，超时！
+class Solution:
+    def judgeSquareSum(self, c):
+        """
+        :type c: int
+        :rtype: bool
+        """
+        for i in range(0,int(c**0.5)+1):
+            for j in range(0,int(c**0.5)+1):
+                if((i**2+j**2)>c):
+                    break
+                elif((i**2+j**2)==c):
+                    return True
+        return False
+
+# 代码二：o(n^0.5)，通过！
+class Solution:
+    def judgeSquareSum(self, c):
+        """
+        :type c: int
+        :rtype: bool
+        """
+        for i in range(0,int(c**0.5)+1):
+            j=c-i**2
+            if((int(j**0.5)**2)==j):
+                return True
+        return False
