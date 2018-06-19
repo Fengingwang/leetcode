@@ -1,0 +1,38 @@
+# Time:  O(1)
+# Space: O(1)
+# Find the total area covered by two rectilinear rectangles in a 2D plane
+# Each rectangle is defined by its bottom left corner and top right corner 
+# Rectangle Area
+# Assume that the total area is never beyond the maximum possible value of int
+# 题目翻译: 求两个2维矩形覆盖的总面积。每个矩形由左下角坐标和右上角坐标定义，覆盖情况见示意图（图示在上面）。假定覆盖总面积不超过int类型的最大值。
+# 思路方法
+# 用两个矩形各自占的面积减去交叠部分的面积即可。所以重点是判断两个矩形是否交叠，以及求交叠部分的面积。 
+# 求交叠部分的面积分为两步：求宽度和求高度，还要注意当不交叠时的负数情况要处理掉。
+
+        """
+        :type A: int
+        :type B: int
+        :type C: int
+        :type D: int
+        :type E: int
+        :type F: int
+        :type G: int
+        :type H: int
+        :rtype: int
+        """
+
+# 思路一: 先判断是否重叠，再据此返回结果。
+class Solution(object):
+    def computeArea(self, A, B, C, D, E, F, G, H):
+        if B>=H or E>=C or F>=D or A>=G:
+            return (C-A) * (D-B) + (G-E) * (H-F)
+        width = min(C,G) - max(A,E)
+        height = min(D,H) - max(B,F)
+        return (C-A) * (D-B) + (G-E) * (H-F) - width * height
+
+# 思路二: 直接计算重叠部分面积，当不交叠时长度或宽度为零。
+class Solution(object):
+    def computeArea(self, A, B, C, D, E, F, G, H):
+        width = max(0, min(C,G) - max(A,E))
+        height = max(0, min(D,H) - max(B,F))
+        return (C-A) * (D-B) + (G-E) * (H-F) - width * height
