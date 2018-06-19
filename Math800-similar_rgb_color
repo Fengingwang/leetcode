@@ -1,0 +1,44 @@
+# Time:  O(1)
+# Space: O(1)
+# Input: color = "#09f166"
+# Output: "#11ee66"
+# Explanation:  
+# The similarity is -(0x09 - 0x11)^2 -(0xf1 - 0xee)^2 - (0x66 - 0x66)^2 = -64 -9 -0 = -73.
+# 题目大意：
+# 给定RGB格式的颜色代码color，求可以简写为'#XYZ'形式的，与之最接近的颜色代码
+# color (r, g, b) 与目标 icolor (ir, ig, ib)的距离为 sum((r - ir) ^ 2 + (g - ig) ^ 2 + (b - ib) ^ 2)
+# Given the color "#ABCDEF", return a 7 character color that is most similar to #ABCDEF, 
+# and has a shorthand (that is, it can be represented as some "#XYZ"
+
+# 解题思路：蛮力法（Brute Force）
+# 枚举'#XYZ'格式的RGB，记录距离的最小值及其对应的RGB
+
+class Solution(object):
+    def similarRGB(self, color):
+        """
+        :type color: str
+        :rtype: str
+        """
+        ir, ig, ib = (int(color[x: x+2], 16) for x in (1, 3, 5))
+        ans = ()
+        delta = 0x7FFFFFFF
+        for r in range(16):
+            for g in range(16):
+                for b in range(16):
+                    ndelta = sum((ic - c * 17) ** 2 for ic, c in zip((ir, ig, ib), (r, g, b)))
+                    if ndelta < delta:
+                        delta = ndelta
+                        ans = r, g, b
+        return '#' + ''.join(hex(c)[2] * 2 for c in ans)
+
+class Solution(object):
+    def similarRGB(self, color):
+        """
+        :type color: str
+        :rtype: str
+        """
+        def rounding(color):
+            q, r = divmod(int(color, 16), 17)
+            if r > 8: q += 1
+            return '{:02x}'.format(17*q)
+        return '#' + rounding(color[1:3]) + rounding(color[3:5]) + rounding(color[5:7])
