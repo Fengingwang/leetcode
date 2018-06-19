@@ -1,0 +1,31 @@
+# Time:  O(logn) = O(1)
+# Space: O(1)
+# Write a program to check whether a given number is an ugly number.
+# Ugly numbers are positive numbers whose prime factors only include 2, 3, 5
+# For example, 6, 8 are ugly while 14 is not ugly since it includes another prime factor 7
+# Note that 1 is typically treated as an ugly number
+
+# 思路一: 根据定义，依次将所给的数除以 2，3，5 直至无法除尽，如果这时得到1则说明所给的数的质因子不超出2，3，5三个数，否则说明有其他质因数。
+class Solution(object):
+    def isUgly(self, num):
+        """
+        :type num: int
+        :rtype: bool
+        """
+        if num <= 0:
+            return False
+        for i in [2, 3, 5]:
+            while num%i == 0:
+                num = num / i
+        return True if num == 1 else False
+# 思路二
+# 考虑到输入是int，python对于大整数的处理非常方便，可以用非常短的代码解决该问题。 
+# 对于一个 int 型的 ugly number， x=2^m ∗ 3^n ∗ 5^t，由于 x<2147483647，故 m<31, n<20, t<14。 
+# 所以一定有，若 y=2^a ∗ 3^b ∗ 5^c， 且 a>=30, b>=19, c>=13， 则 y%x=0
+class Solution(object):
+    def isUgly(self, num):
+        """
+        :type num: int
+        :rtype: bool
+        """
+        return num > 0 == 30**30 % num
