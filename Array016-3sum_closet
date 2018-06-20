@@ -1,0 +1,38 @@
+# Given an array S of n integers,
+# find three integers in S such that the sum is closest to a given number, target
+# Return the sum of the three integers
+# You may assume that each input would have exactly one solution
+# For example, given array S = {-1 2 1 -4}, and target = 1
+# The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
+
+# 题目大意: 3sum问题的变种，寻找与目标数字最近的那一组数,返回三数之和
+# 解题思路
+# 一样的遍历每个数，对剩余数组进行双指针扫描。区别仅仅在于当： sum = A[left] + A[right] 
+# (1) sum = target时直接返回 
+# (2) sum != target时，在相应移动left/right指针之前，先计算abs(sum-target)的值，并更新结果。
+# 时间复杂度：O(n log n)（排序）+ O（n^2）= O（n^2）
+
+class Solution:
+    def threeSumClosest(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
+        nums.sort()
+        closest_sum = sys.maxsize
+        for i in range(len(nums)-2):  # 遍历至倒数第三个，后面两个指针
+            if i == 0 or nums[i] > nums[i-1]:  # 相同数不进入循环
+                left = i + 1
+                right = len(nums) - 1
+                while left < right:
+                    diff = nums[left] + nums[right] + nums[i] - target
+                    if abs(diff) < abs(closest_sum):
+                        closest_sum = diff
+                    if diff == 0:
+                        return target
+                    elif diff < 0:
+                        left += 1
+                    else:
+                        right -= 1
+        return closest_sum + target  # 原三数之和
