@@ -1,0 +1,40 @@
+# Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
+# 如果矩阵中存在0，那么把0所在的行和列都置为0。要求在所给的矩阵上完成操作。 
+# 注意：最好的空间复杂度是常数空间
+
+# 思路： 3 ways to do it but with different space 
+# 1.创建一个矩阵的拷贝，然后根据这个拷贝进行判断O(MN) 
+# 2.创建一个数组，记录矩阵为0的行和列下标O(m+n) 
+# 3.把有0的元素映射到首行和首列O(c)
+# 这里的复杂度是空间复杂度 O(c)
+
+class Solution(object):
+    def setZeroes(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: void Do not return anything, modify matrix in-place instead.
+        """
+        first_row = False
+        first_col = False
+        m = len(matrix)
+        n = len(matrix[0])
+        for i in range(m):
+            if matrix[i][0] == 0:
+                first_col = True
+        for j in range(n):
+            if matrix[0][j] == 0:
+                first_row = True
+        for i in range(1, m):
+            for j in range(1, n):
+                if matrix[i][j] == 0:
+                    matrix[i][0] = matrix[0][j] = 0
+        for i in range(1, m):
+            for j in range(1, n):
+                if matrix[0][j] == 0 or matrix[i][0] == 0:
+                    matrix[i][j] = 0
+        if first_row:
+            for j in range(n):
+                matrix[0][j] = 0
+        if first_col:
+            for i in range(m):
+                matrix[i][0] = 0
