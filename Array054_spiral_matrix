@@ -1,0 +1,78 @@
+# Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order
+# Given the following matrix:
+# [
+#  [ 1, 2, 3 ],
+#  [ 4, 5, 6 ],
+#  [ 7, 8, 9 ]
+# ]
+# You should return [1,2,3,6,9,8,7,4,5].
+# 题目要求: 给定一个矩阵，按照螺旋的方式读取矩阵中的元素，由内而外。
+
+# 解题思路
+# 程序逻辑分为4个状态 
+# 1. 0表示向右边读取 
+# 2. 1表示向下读取 
+# 3. 2表示向左读取 
+# 4. 3表示向上读取 
+# 仅仅用状态还不够，因为要从最外圈向内读取，所以还需要四个指针： 
+# 1. up表示外圈的上行位置 
+# 2. down表示外圈的下行位置 
+# 3. left表示外圈的左列位置 
+# 4. right表示外圈的右列位置
+
+class Solution(object):
+    def spiralOrder(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: List[int]
+        """
+        if len(matrix) == 0:
+            return []
+        ans = []
+        direct = 0 # 0 for right, 1 for down, 2 for left, 3 for up
+        up = left = 0
+        down,right = len(matrix) - 1,len(matrix[0]) - 1
+        while up <= down and left <= right:
+            if direct == 0:
+                for i in range(left,right + 1):
+                    ans.append(matrix[up][i])
+                up += 1
+            elif direct == 1:
+                for i in range(up,down + 1):
+                    ans.append(matrix[i][right])
+                right -= 1
+            elif direct == 2:
+                for i in range(left,right + 1)[::-1]:
+                    ans.append(matrix[down][i])
+                down -= 1
+            else:
+                for i in range(up,down + 1)[::-1]:
+                    ans.append(matrix[i][left])
+                left += 1
+            direct = (direct + 1) % 4
+        return ans
+
+class Solution:
+    # @param matrix, a list of lists of integers
+    # @return a list of integers
+    def spiralOrder(self, matrix):
+        result = []
+        if matrix == []:
+            return result
+
+        left, right, top, bottom = 0, len(matrix[0]) - 1, 0, len(matrix) - 1
+
+        while left <= right and top <= bottom:
+            for j in xrange(left, right + 1):
+                result.append(matrix[top][j])
+            for i in xrange(top + 1, bottom):
+                result.append(matrix[i][right])
+            for j in reversed(xrange(left, right + 1)):
+                if top < bottom:
+                    result.append(matrix[bottom][j])
+            for i in reversed(xrange(top + 1, bottom)):
+                if left < right:
+                    result.append(matrix[i][left])
+            left, right, top, bottom = left + 1, right - 1, top + 1, bottom - 1
+
+        return result
