@@ -1,0 +1,54 @@
+# You are given an n x n 2D matrix representing an image
+# Rotate the image by 90 degrees (clockwise).
+# Follow up: Could you do this in-place?
+Given input matrix = 
+[
+  [1,2,3],
+  [4,5,6],
+  [7,8,9]
+],
+rotate the input matrix in-place such that it becomes:
+[
+  [7,4,1],
+  [8,5,2],
+  [9,6,3]
+]
+
+# 解题方法
+# 先上下翻转，再延左上到右下的对角线进行翻转(镜像操作)。
+# 需要注意的是上下翻转的时候是rows-i-1，而不是rows-i
+class Solution(object):
+    def rotate(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: void Do not return anything, modify matrix in-place instead.
+        """
+        if matrix:
+            rows = len(matrix)
+            cols = len(matrix[0])
+            for i in xrange(rows / 2):
+                for j in xrange(cols):
+                    matrix[i][j], matrix[rows - i - 1][j] = matrix[rows - i - 1][j], matrix[i][j]
+            for i in xrange(rows):
+                for j in xrange(i):
+                    matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+
+# 解题方法
+# 原矩阵的 i，j 会变到 j，(n-1)-i 这个位置上
+# 如果直接去换，此处有坑：遍历下一个的时候，可能已经变成最新的元素了，则又把它变走了
+# 先转置上三角，再每一行翻转
+
+class Solution(object):  
+    def rotate(self, matrix):  
+        """ 
+        :type matrix: List[List[int]] 
+        :rtype: void Do not return anything, modify matrix in-place instead. 
+        """  
+        n=len(matrix)  
+        for i in range(n):      #先转置上三角  
+            for j in range(i+1,n):  
+                t=matrix[j][i]  
+                matrix[j][i]=matrix[i][j]  
+                matrix[i][j]=t  
+        for i in range(n):      #再每一行翻转  
+            matrix[i].reverse()  
