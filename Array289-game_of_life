@@ -1,0 +1,65 @@
+# Time:  O(m * n)
+# Space: O(1)
+
+# According to the Wikipedia article:
+# "The Game of Life, also known simply as Life, is a cellular automaton devised by the British
+# mathematician John Horton Conway in 1970."
+#
+# Given a board with m by n cells, each cell has an initial state live (1) or dead (0).
+# Each cell interacts with its eight neighbors (horizontal, vertical, diagonal)
+# using the following four rules
+# - Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+# - Any live cell with two or three live neighbors lives on to the next generation.
+# - Any live cell with more than three live neighbors dies, as if by over-population..
+# - Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+#
+# Write a function to compute the next state (after one update) of the board given its current state.
+# Follow up:
+# - Could you solve it in-place? Remember that the board needs to be updated at the same time:
+#   You cannot update some cells first and then use their updated values to update other cells.
+# - In this question, we represent the board using a 2D array.
+#   In principle, the board is infinite, which would cause problems
+#   when the active area encroaches the border of the array.
+#   How would you address these problems?
+
+# 细胞变为“活”，只有两种可能。
+# 当它本来为存活态时，邻居有2或3个时保持原来的状态，也就是“活”。
+# 还有一种是，当原本为死亡态时，邻居有3个时，也会变为“活”。
+# 说白了仅有当活的细胞邻居2~3个是活的，这个细胞下一次才是活的，死的细胞邻居3个活的，下一刻这个细胞也是活的
+# 根据给出的四个条件，产生下一代的状态(live/die)
+# 对于这道题很容易想到的就是记录每一个元素周围有几个live状态的元素，也就是有几个一，然后判断该元素的在下一个state中是死是活。
+# 但是肯定不可以判断完之后立刻就在同一个数组里改成下一个状态，这次更改会影响下一个元素的统计结果。
+# 那我们使用另外的数据空间（可以是另一个数组），记录下来新的状态。这是基本的思路。
+# 但这道题的follow up要求用in-place 而不是使用另外的数组。
+# 这道题有一个非常有趣的点是 本来可以用boolean就可以表示的生命状态用了int，如下
+# live: 0 0 0 0 0 0 0 1
+# die: 0 0 0 0 0 0 0 0
+# 既然如此，我们可以用这个int的倒数第二位来记录下一个的状态(current_element |= 2)，
+# 然后在记录完所有的元素之后，用另外一次遍历让所有的元素右移一位，便得到了最终的结果(current_element >>= 1)。
+# 不过要注意的是，这个方法不仅统计了当前元素的邻居，而且把自己也算进去了。做count -= current_element 才能得出邻居
+
+# 解题思路： 位运算（bit manipulation）
+# 由于细胞只有两种状态0和1，因此可以使用二进制来表示细胞的生存状态
+# 更新细胞状态时，将细胞的下一个状态用高位进行存储
+# 全部更新完毕后，将细胞的状态右移一位
+
+class Solution(object):
+    def gameOfLife(self, board):
+        """
+        :type board: List[List[int]]
+        :rtype: void Do not return anything, modify board in-place instead.
+        """
+        m = len(board)
+        n = len(board[0]) if m else 0
+        for i in xrange(m):
+            for j in xrange(n):
+                count = 0
+                ## Count live cells in 3x3 block
+                for I in xrange(max(i-1, 0), min(i+2, m)):
+                    for J in xrange(max(j-1, 0), min(j+2, n)):
+                        count += board[I][J] & 1
+                if (count == 4 and board[i][j]) or count == 3:
+                    board[i][j] |= 2  # Mark as live.
+        for i in xrange(m):
+            for j in xrange(n):
+                board[i][j] >>= 1  # Update to the next state.
