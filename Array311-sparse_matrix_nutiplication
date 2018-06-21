@@ -1,0 +1,85 @@
+# Given two sparse matrices A and B, return the result of AB.
+# You may assume that A's column number is equal to B's row number.
+# A = [
+#   [ 1, 0, 0],
+#   [-1, 0, 3]
+# ]
+
+# B = [
+#   [ 7, 0, 0 ],
+#   [ 0, 0, 0 ],
+#  [ 0, 0, 1 ]
+# ]
+#      |  1 0 0 |   | 7 0 0 |   |  7 0 0 |
+# AB = | -1 0 3 | x | 0 0 0 | = | -7 0 3 |
+#                   | 0 0 1 |
+
+# 解法： 题目提示用hashtable。可以用俩hashtable保存A中非零的行和B中非零的列。但是运行时间并没有中规中矩的矩阵乘法快。
+
+# 解法： 直接数学相乘
+# 根据题意，就是线性代数的矩阵乘法。 矩阵乘法, 第i行,j列的数字,是有第一个矩阵的i行,和第二个矩阵的j列相乘,再相加得到的。
+# 利用python的built-in function， zip， map， sum能够很快解题。
+class Solution(object):
+    def multiply(self, A, B):
+        """
+        :type A: List[List[int]]
+        :type B: List[List[int]]
+        :rtype: List[List[int]]
+        """
+        result = []
+        BT = zip(*B) # transfer B,get the column of B
+        length = len(B)
+        for row in A:
+            if not any(row):
+                result.append([0] * length)
+                continue
+            result.append([sum(map(lambda (x, y): x*y, zip(row, col))) if any(col) else 0 for col in BT])
+        return result
+
+# Time:  O(m * n * l), A is m x n matrix, B is n x l matrix
+# Space: O(m * l)
+class Solution(object):
+    def multiply(self, A, B):
+        """
+        :type A: List[List[int]]
+        :type B: List[List[int]]
+        :rtype: List[List[int]]
+        """
+        m, n, l = len(A), len(A[0]), len(B[0])
+        res = [[0 for _ in xrange(l)] for _ in xrange(m)]
+        for i in xrange(m):
+            for k in xrange(n):
+                if A[i][k]:
+                    for j in xrange(l):
+                        res[i][j] += A[i][k] * B[k][j]
+        return res
+
+# 优化思路：
+# 这道题让我们实现稀疏矩阵相乘，稀疏矩阵的特点是矩阵中绝大多数的元素为0，而相乘的结果是还应该是稀疏矩阵，即还是大多数元素为0，
+# 那么我们使用传统的矩阵相乘的算法肯定会处理大量的0乘0的无用功，所以我们需要适当的优化算法，
+# 1、记录A中的全零行和B中的全零列，并且在双重循环中跳过这些行和列，以达到加速的目标。
+# 2、改变一下正常矩阵乘积算法中的第二三重循环。 这里的技巧是：对于结果矩阵，我们不是逐个完成里面每个元素的计算的，而是为每个元素逐步累加新的增量。
+# 这样当遇到A矩阵中的0元素时就可以直接跳过，因为它不会对结果矩阵中的任何一个元素提供增量。实验结果证明这种优化方法还要优于第一种优化方法。
+
+class Solution(object):
+    '''算法思路：
+    先将稀疏矩阵压缩成三元二维数组，然后遍历三元二维数组，即可
+    三元二维数组的结构为 [行，列，值]
+    结果：AC
+    '''
+    def compress(self, matrix):
+        return [
+            [i, j, num]
+            for i, row in enumerate(matrix)
+            for j, num in enumerate(row) if num
+        ]
+
+    def multiply(self, A, B):
+        (cpA, cpB), r = map(self.compress, (A, B)), [
+            [0] * len(B[0]) for i in xrange(len(A))]
+
+        [r[rowA].__setitem__(columnB, r[rowA][columnB] + numA * numB)
+         for rowA, columnA, numA in cpA
+         for rowB, columnB, numB in cpB if columnA == rowB]
+
+        return r
