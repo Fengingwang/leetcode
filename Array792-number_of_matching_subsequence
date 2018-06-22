@@ -1,0 +1,57 @@
+# Time:  O(n + w), n is the size of S, w is the size of words
+# Space: O(1)
+# Given string S and a dictionary of words words, find the number of words[i] that is a subsequence of S.
+# Input: S = "abcde"
+# words = ["a", "bb", "acd", "ace"]
+# Output: 3
+# Explanation: There are three words in words that are a subsequence of S: "a", "acd", "ace".
+# Note:
+# - All words in words and S will only consists of lowercase letters.
+# - The length of S will be in the range of [1, 50000].
+# - The length of words will be in the range of [1, 5000].
+# - The length of words[i] will be in the range of [1, 50].
+# 解题思路:
+# 这个题目很容易想到要解决的主要问题是判断字符串s是否是字符串t的子序列。
+# 子序列和子串是不同的，子串是要求连续的，而子序列是可以不连续的。
+# 把words的第一个字符以<character, string>的数据结构存储，接着遍历S中的每一个字符，
+# 找到在该字符下的words，删除words的字符，更新word。当word的长度为1时，表示匹配成功，计数。
+
+class Solution(object):
+    def numMatchingSubseq(self, S, words):
+        """
+        :type S: str
+        :type words: List[str]
+        :rtype: int
+        """
+        res = 0
+        dic = collections.defaultdict(list)
+        for word in words:
+            dic[word[0]].append(word)
+
+        for s in S:
+            queue = dic[s]
+            size = len(queue)
+            for i in range(size):
+                word = queue.pop(0)
+                if len(word) == 1:
+                    res += 1
+                    continue
+                word = word[1:]
+                dic[word[0]].append(word)
+        return res
+
+import collections
+class Solution(object):
+    def numMatchingSubseq(self, S, words):
+        """
+        :type S: str
+        :type words: List[str]
+        :rtype: int
+        """
+        waiting = collections.defaultdict(list)
+        for word in words:
+            waiting[word[0]].append(iter(word[1:]))
+        for c in S:
+            for it in waiting.pop(c, ()):
+                waiting[next(it, None)].append(it)
+        return len(waiting[None])
