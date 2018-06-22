@@ -1,0 +1,54 @@
+# Implement a MyCalendar class to store your events.
+# A new event can be added if adding the event will not cause a double booking.
+# Your class will have the method, book(int start, int end).
+# Formally, this represents a booking on the half open interval [start, end),
+# the range of real numbers x such that start <= x < end.
+# A double booking happens when two events have some non-empty intersection
+# (ie., there is some time that is common to both events.)
+# For each call to the method MyCalendar.book,
+# return true if the event can be added to the calendar successfully without causing a double booking.
+# Otherwise, return false and do not add the event to the calendar.
+# Your class will be called like this: MyCalendar cal = new MyCalendar(); MyCalendar.book(start, end)
+# Example 1:
+# MyCalendar();
+# MyCalendar.book(10, 20); // returns true
+# MyCalendar.book(15, 25); // returns false
+# MyCalendar.book(20, 30); // returns true
+# Explanation:
+# The first event can be booked.  The second can not because time 15 is already booked by another event.
+# The third event can be booked, as the first event takes every time less than 20, but not including 20.
+# Note:
+# - The number of calls to MyCalendar.book per test case will be at most 1000.
+# - In calls to MyCalendar.book(start, end), start and end are integers in the range [0, 10^9].
+
+# 这道题让我们设计一个我的日历类，里面有一个book函数，需要给定一个起始时间和结束时间，
+# 与Google Calendar不同的是，我们的事件事件上不能重叠，实际上这道题的本质就是检查区间是否重叠。
+# 那么我们可以暴力搜索，对于每一个将要加入的区间，我们都和已经已经存在的区间进行比较，看是否有重复。
+# 而新加入的区间和当前区间产生重复的情况有两种，
+# 一种是新加入区间的前半段重复，并且，另一种是新加入区间的后半段重复。
+# 比如当前区间如果是[3, 8)，那么第一种情况下新加入区间就是[6, 9)，
+# 那么触发条件就是当前区间的起始时间小于等于新加入区间的起始时间，并且结束时间大于新加入区间的结束时间。
+# 第二种情况下新加入区间就是[2,5)，
+# 那么触发条件就是当前区间的起始时间大于等于新加入区间的起始时间，并且起始时间小于新加入区间的结束时间。
+# 这两种情况均返回false，
+# 否则就将新区间加入数组，并返回true即可，
+
+class MyCalendar:  
+    def __init__(self):  
+        self.intervals = []  
+    def book(self, start, end):  
+        """ 
+        :type start: int 
+        :type end: int 
+        :rtype: bool 
+        """  
+        for s,t in self.intervals:  
+            if not (start>=t or end<=s):  return False  
+        self.intervals.append([start, end])  
+        return True  
+  
+# Your MyCalendar object will be instantiated and called as such:  
+obj = MyCalendar()  
+print(obj.book(10, 20));   
+print(obj.book(15, 25));   
+print(obj.book(20, 30));   
