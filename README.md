@@ -1,3 +1,3 @@
 # leetcode
-# The first try for leetcode, fighting!!!
+# Fall seven times, stand up eight!!!
 https://www.ojcoder.cn/LeetCode/
