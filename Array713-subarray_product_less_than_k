@@ -1,0 +1,49 @@
+# Time:  O(n)
+# Space: O(1)
+# Your are given an array of positive integers nums.
+# Count and print the number of (contiguous) subarrays where the product of all the elements
+# in the subarray is less than k.
+# Input: nums = [10, 5, 2, 6], k = 100
+# Output: 8
+# Explanation: The 8 subarrays that have product less than 100 are:
+#              [10], [5], [2], [6], [10, 5], [5, 2], [2, 6], [5, 2, 6].
+# Note that [10, 5, 2] is not included as the product of 100 is not strictly less than k.
+# Note:
+# 0 < nums.length <= 50000.
+# 0 < nums[i] < 1000.
+# 0 <= k < 10^6.
+
+# 题目大意： 给定数组nums，求其中乘积小于k的连续子数组的个数。
+# 解题思路： 滑动窗口（Sliding Window） 维护滑动窗口，满足窗口内数组的乘积小于k即可。
+# 这道题给了我们一个数组和一个数字K，让我们求子数组且满足乘积小于K的个数。
+# 既然是子数组，那么必须是连续的，所以肯定不能给数组排序了，这道题好在限定了输入数字都是正数，能稍稍好做一点。
+# 开始用的是暴力搜索的方法来做的，就是遍历所有的子数组算乘积和K比较，两个for循环就行了，但是OJ不答应。
+# 于是搜大神们的解法。相当于是一种滑动窗口的解法，维护一个数字乘积刚好小于k的滑动窗口窗口
+# 用变量left来记录其左边界的位置，右边界i就是当前遍历到的位置。
+# 遍历原数组，用prod乘上当前遍历到的数字，
+# 然后进行while循环，
+# 如果prod大于等于k，则滑动窗口的左边界需要向右移动一位，删除最左边的数字，
+# 那么少了一个数字，乘积就会改变，所以用prod除以最左边的数字，然后左边右移一位，即left自增1。
+# 当我们确定了窗口的大小后，就可以统计子数组的个数了，就是窗口的大小。
+# 为啥呢，比如[5 2 6]这个窗口，k还是100，右边界刚滑到6这个位置，这个窗口的大小就是包含6的子数组乘积小于k的个数，
+# 即[6], [2 6], [5 2 6]，正好是3个。
+# 所以窗口每次向右增加一个数字，然后左边去掉需要去掉的数字后，窗口的大小就是新的子数组的个数，每次加到结果res中即可
+
+class Solution(object):
+    def numSubarrayProductLessThanK(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
+        product = 1
+        ll = rr = -1
+        ans = 0
+        for num in nums:
+            rr += 1
+            product *= num
+            while ll + 1 <= rr and product >= k:
+                product /= nums[ll + 1]
+                ll += 1
+            ans += rr - ll
+        return ans
