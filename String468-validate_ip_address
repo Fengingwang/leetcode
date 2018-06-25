@@ -1,0 +1,113 @@
+# Time:  O(1)
+# Space: O(1)
+
+# In this problem, your job to write a function to check whether a input string
+# is a valid IPv4 address or IPv6 address or neither.
+#
+# IPv4 addresses are canonically represented in dot-decimal notation,
+# which consists of four decimal numbers, each ranging from 0 to 255, separated by dots ("."), e.g.,172.16.254.1;
+#
+# Besides, you need to keep in mind that leading zeros in the IPv4 is illegal.
+# For example, the address 172.16.254.01 is illegal.
+#
+# IPv6 addresses are represented as eight groups of four hexadecimal digits,
+# each group representing 16 bits. The groups are separated by colons (":").
+# For example, the address 2001:0db8:85a3:0000:0000:8a2e:0370:7334 is a legal one.
+# Also, we could omit some leading zeros among four hexadecimal digits and
+# some low-case characters in the address to upper-case ones,
+# so 2001:db8:85a3:0:0:8A2E:0370:7334 is also a valid IPv6 address(Omit leading zeros and using upper cases).
+#
+# However, we do not replace a consecutive group of zero value with a single empty group
+# using two consecutive colons (::) to pursue simplicity.
+# For example, 2001:0db8:85a3::8A2E:0370:7334 is an invalid IPv6 address.
+#
+# Besides, you need to keep in mind that extra leading zeros in the IPv6 is also illegal.
+# For example, the address 02001:0db8:85a3:0000:0000:8a2e:0370:7334 is also illegal.
+#
+# Note: You could assume there is no extra space in the test cases and
+# there may some special characters in the input string.
+#
+# Example 1:
+# Input: "172.16.254.1"
+# Output: "IPv4"
+#
+# Explanation: This is a valid IPv4 address, return "IPv4".
+# Example 2:
+# Input: "2001:0db8:85a3:0:0:8A2E:0370:7334"
+# Output: "IPv6"
+#
+# Explanation: This is a valid IPv6 address, return "IPv6".
+# Example 3:
+# Input: "256.256.256.256"
+# Output: "Neither"
+#
+# Explanation: This is neither a IPv4 address nor a IPv6 address.
+题目大意：
+编写函数，判断给定的IP地址是否为有效的IPv4地址或者Ipv6地址。
+
+Ipv4地址为4个以点分隔的数字，范围0到255，例如172.16.254.1。
+此外，Ipv4不允许出现前缀0。 例如地址172.16.254.01是无效的。
+
+Ipv6地址为8个以冒号分隔的16进制数字，例如2001:0db8:85a3:0000:0000:8a2e:0370:7334。
+允许出现前缀0，并且小写字母和大写字母可以同时出现，所以2001:db8:85a3:0:0:8A2E:0370:7334也是有效的IPv6地址。
+然而，不允许出现两个连续的冒号。例如2001:0db8:85a3::8A2E:0370:7334是无效的。
+此外，IPv6地址中每一个数字的长度不应大于4位，例如02001:0db8:85a3:0000:0000:8a2e:0370:7334是无效的。
+
+注意：你可以假设测试用例中没有额外的空白字符，但是可能会包含一些特殊字符。
+
+解题思路： 字符串模拟题，根据规则逐一验证即可
+
+import string
+class Solution(object):
+    def validIPAddress(self, IP):
+        """
+        :type IP: str
+        :rtype: str
+        """
+        blocks = IP.split('.')
+        if len(blocks) == 4:
+            for i in xrange(len(blocks)):
+                if not blocks[i].isdigit() or not 0 <= int(blocks[i]) < 256 or \
+                   (blocks[i][0] == '0' and len(blocks[i]) > 1):
+                    return "Neither"
+            return "IPv4"
+
+class Solution(object):
+    def validIPAddress(self, IP):
+        """
+        :type IP: str
+        :rtype: str
+        """
+        if self.validIPV4(IP):
+            return 'IPv4'
+        if self.validIPV6(IP):
+            return 'IPv6'
+        return 'Neither'
+
+    def validIPV4(self, IP):
+        parts = IP.split('.')
+        if len(parts) != 4: return False
+        for part in parts:
+            if not part: return False
+            if not part.isdigit(): return False
+            if part[0] == '0' and len(part) > 1: return False
+            if int(part) > 255: return False
+        return True
+
+    def validIPV6(self, IP):
+        parts = IP.split(':')
+        if len(parts) != 8: return False
+        for part in parts:
+            if not part: return False
+            if len(part) > 4: return False
+            if any(c not in string.hexdigits for c in part): return False
+        return True
+
+        blocks = IP.split(':')
+        if len(blocks) == 8:
+            for i in xrange(len(blocks)):
+                if not (1 <= len(blocks[i]) <= 4) or \
+                   not all(c in string.hexdigits for c in blocks[i]):
+                    return "Neither"
+            return "IPv6"
+        return "Neither"
