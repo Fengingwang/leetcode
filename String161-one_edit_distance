@@ -1,0 +1,41 @@
+# Time:  O(m + n)
+# Space: O(1)
+#
+# Given two strings S and T, determine if they are both one edit distance apart.
+
+class Solution(object):
+    '''算法思路：
+    根据不同的情况进行分析：
+    - 长度相差大于 1 的，编辑距离肯定大于 1
+    - 长度相等的，判断其不相等字符个数是否为 1 即可
+    - 长度相差为 1 的，去除掉较长字符串里第一个不相等的字符，判断剩下是否相等即可
+    '''
+    def isOneEditDistance(self, s, t):
+        diff = abs(len(s) - len(t))
+
+        if diff > 1 or s == t:
+            return False
+
+        if diff == 0:
+            return sum([s[i] != t[i] for i in xrange(len(s))]) == 1
+
+        if len(s) > len(t):
+            s, t = t, s
+
+        for i in xrange(len(s)):
+            if s[i] != t[i]:
+                return s[i:] == t[i+1:]
+        return True
+
+解题思路：
+编辑距离问题。用动态规划来解决。
+状态转移方程是这样的：
+dp[i][j]表示word1[0...i-1]到word2[0...j-1]的编辑距离。
+dp[i][0] == i 因为只需要做i次删除操作就可以了。
+dp[0][i] == i 因为只需做i次插入操作就可以了。
+dp[i-1][j] = dp[i][j]+1 因为word1[0...i-2]到word2[0...j-1]的距离是dp[i-1][j]
+dp[i][j] = dp[i-1][j]+1 因为word1[0...i-1]到word1[0...i-2]需要执行一次删除
+dp[i][j] = dp[i][j-1]+1 因为还需要加一次word2的插入操作
+if word[i-1] == word[j-1  then dp[i][j]=dp[i-1][j-1]
+if word[i-1] != word[j-1] then dp[i][j]=dp[i-1][j-1]+1 因为还需要执行一次替换replace操作 
+以上就是状态转移方程的推导。
