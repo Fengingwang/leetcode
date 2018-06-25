@@ -1,0 +1,31 @@
+# Time:  O(m * n)
+# Space: O(m + n)
+# Given two numbers represented as strings, return multiplication of the numbers as a string.
+# Note: The numbers can be arbitrarily large and are non-negative.
+#
+解题思路
+先将两个数字字符串进行反转，使得低位在前，然后根据乘法法则逐位相乘，并将结果先累加到相应位置上，然后对逐位乘的结果按位从低位到高位取模，进位。
+最后返回时要先去掉高位可能存在的0。
+
+class Solution(object):
+    def multiply(self, num1, num2):
+        """
+        :type num1: str
+        :type num2: str
+        :rtype: str
+        """
+        num1, num2 = num1[::-1], num2[::-1]
+        res = [0] * (len(num1) + len(num2))
+        for i in xrange(len(num1)):
+            for j in xrange(len(num2)):
+                res[i + j] += int(num1[i]) * int(num2[j])
+                res[i + j + 1] += res[i + j] / 10
+                res[i + j] %= 10
+
+        # Skip leading 0s.
+        i = len(res) - 1
+        while i > 0 and res[i] == 0:
+            i -= 1
+
+        return ''.join(map(str, res[i::-1]))
+
