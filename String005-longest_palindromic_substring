@@ -1,0 +1,87 @@
+# Time:  O(n)
+# Space: O(n)
+#
+# Given a string S, find the longest palindromic substring in S.
+# You may assume that the maximum length of S is 1000,
+# and there exists one unique longest palindromic substring.
+#
+题意分析： 
+这道题目是输入一段不超过1000的字符串，输出最长的回文子字符串，输入的字符串有一个唯一的最长回文子字符串
+
+题目思路： 
+题目的字符串长度是1000，如果我们暴力解决，那么构造字符串时间复杂度（O（n^2）），
+判断字符串是不是回文字符串时间复杂度（O（n））总的时间复杂度是（O（n^3）），如果暴力解决，那么肯定是会TLE的。
+寻找回文字符串一般有两种方法。
+第一种是先构造一个字符串，从首尾开始判断是否对应相等。这种方法需要的时间复杂度比较大。
+第二种方法是从中间往两边找，直到找到两边不一样。这种方法我们要先确定中间的key字符，
+这里由于当重复字符出现的时候，应该把这些重复的字符捆在一起，因为重复字符出现的时候放中间可以保证满足是回文字符串。
+比如 'abbbbba'，如果我们将'bbbbb'捆在一起可以减少很多不必要的判断，而且可以避免回文字符串个数为偶数的时候被忽略的情况，比如'abba'。
+
+那么我们可以初始化回文子字符串为s[0]，长度是1，从第一个字符开始往两边找，记录从这个字符为中间字符搜索的回文字符串的长度，
+如果大于当前记录的回文，那么替换当前的字符串及其长度。从中间找到了最后一位或者以最后一个字符为中间key字符的时候结束。
+这种方法最坏的情况是’ababababababababa……bac’，
+这种情况的时间复杂度是（0 + 1 + 2 +…+n - 1） = (O(n^2))，
+由于字符串长度为1000，所以（O（n^2））的时间复杂度是可以接受的。
+
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        length=len(s)
+        if(length<=1 or s==s[::-1]):#如果字符串长度为1直接返回
+            return s
+
+        start=0
+        maxLen=1
+        for i in range(0,length):
+            ##注意s[1:3]表示的是第2个和第3个char
+            if i-maxLen>=1 and s[i-maxLen-1:i+1]==s[i-maxLen-1:i+1][::-1]:
+                start=i-maxLen-1
+                maxLen+=2
+                continue
+            if i-maxLen>=0 and s[i-maxLen:i+1]==s[i-maxLen:i+1][::-1]:
+                start=i-maxLen
+                maxLen+=1
+
+        return s[start:start+maxLen]
+
+解题方法: 动态规划。
+动态规划的两个特点：第一大问题拆解为小问题，第二重复利用之前的计算结果，来解答这道题。
+那如何划分小问题呢，
+我们可以先把所有长度最短为1的子字符串计算出来，根据起始位置从左向右，这些必定是回文。
+然后计算所有长度为2的子字符串，再根据起始位置从左向右。
+到长度为3的时候，我们就可以利用上次的计算结果：如果中心对称的短字符串不是回文，那长字符串也不是，如果短字符串是回文，那就要看长字符串两头是否一样。
+这样，一直到长度最大的子字符串，我们就把整个字符串集穷举完了。
+我们维护一个二维数组dp，其中dp[i][j]表示字符串区间[i, j]是否为回文串，
+当i = j时，只有一个字符，肯定是回文串，
+如果i = j + 1，说明是相邻字符，此时需要判断s[i]是否等于s[j]，
+如果i和j不相邻，即i - j >= 2时，除了判断s[i]和s[j]相等之外，dp[j + 1][i - 1]若为真，就是回文串，
+通过以上分析，可以写出递推式如下：
+dp[i, j] = 1     if i == j
+
+dp[i, j] = s[i] == s[j]  if j = i + 1
+
+dp[i, j]= s[i] == s[j] && dp[i + 1][j - 1]    if j > i + 1      
+代码刚提交的时候超时了，但是使用set一下，看看是否只包含相同字符，这样就通过了！
+
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        if len(set(s)) == 1: return s
+        n = len(s)
+        start, end, maxL = 0, 0, 0
+        dp = [[0] * n for _ in range(n)]
+        for i in range(n):
+            for j in range(i):
+                dp[j][i] = (s[j] == s[i]) & ((i - j < 2) | dp[j + 1][i - 1])
+                if dp[j][i] and maxL < i - j + 1:
+                    maxL = i - j + 1
+                    start = j
+                    end = i
+            dp[i][i] = 1
+        return s[start : end + 1]
