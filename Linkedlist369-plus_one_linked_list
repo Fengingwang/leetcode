@@ -1,0 +1,84 @@
+Given a non-negative number represented as a singly linked list of digits, plus one to the number.
+The digits are stored such that the most significant digit is at the head of the list.
+Example:
+Input:  1->2->3
+Output: 1->2->4
+
+这道题给了我们一个链表，用来模拟一个三位数，表头是高位，现在让我们进行加1运算，
+这道题的难点在于链表无法通过坐标来访问元素，只能通过遍历的方式进行，
+而这题刚好让我们从链尾开始操作，从后往前，遇到进位也要正确的处理，最后还有可能要在开头补上一位。
+那么我们反过来想，如果链尾是高位，那么进行加1运算就方便多了，直接就可以边遍历边进行运算处理，
+那么我们可以做的就是先把链表翻转一下，然后现在就是链尾是高位了，
+我们进行加1处理运算结束后，再把链表翻转回来即可，
+
+下面这种方法比较巧妙了，思路是遍历链表，
+找到右起第一个不为9的数字，
+如果找不到这样的数字，说明所有数字均为9，那么在表头新建一个值为0的新节点，进行加1处理，然后把右边所有的数字都置为0即可。
+举例来说：
+1->2->3，第一个不为9的数字为3，对3进行加1，变成4，右边没有节点了，所以不做处理，返回1->2->4。
+8->9->9，第一个不为9的数字为8，进行加1处理变成了9，然后把后面的数字都置0，得到结果9->0->0。
+9->9->9，找不到不为9的数字，那么再前面新建一个值为0的节点，进行加1处理变成了1，把后面的数字都置0，得到1->0->0->0。
+
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+# Time:  O(n)
+# Space: O(1)
+# Two pointers solution.
+class Solution(object):
+    def plusOne(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+        if not head: return None
+
+        dummy = ListNode(0)
+        dummy.next = head
+
+        left, right = dummy, head
+        while right.next:
+            if right.val != 9:
+                left = right
+            right = right.next
+
+        if right.val != 9:
+            right.val += 1
+        else:
+            left.val += 1
+            right = left.next
+            while right:
+                right.val = 0
+                right = right.next
+
+        return dummy if dummy.val else dummy.next
+
+# Time:  O(n)
+# Space: O(1)
+class Solution2(object):
+    def plusOne(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+        def reverseList(head):
+            dummy = ListNode(0)
+            curr = head
+            while curr:
+                dummy.next, curr.next, curr = curr, dummy.next, curr.next
+            return dummy.next
+
+        rev_head = reverseList(head)
+        curr, carry = rev_head, 1
+        while curr and carry:
+            curr.val += carry
+            carry = curr.val / 10
+            curr.val %= 10
+            if carry and curr.next is None:
+                curr.next = ListNode(0)
+            curr = curr.next
+
+        return reverseList(rev_head)
