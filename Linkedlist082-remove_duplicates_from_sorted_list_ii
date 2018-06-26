@@ -1,0 +1,42 @@
+# Time:  O(n)
+# Space: O(1)
+# Given a sorted linked list, delete all nodes that have duplicate numbers,
+# leaving only distinct numbers from the original list.
+# For example,
+# Given 1->2->3->3->4->4->5, return 1->2->5.
+# Given 1->1->1->2->3, return 2->3.
+
+题目大意: 在一个链表中，如果一个节点的值出现的不止一次，那么把这个节点删除掉。
+解题方法
+注意审题啊，这个distinct的意思并不是去重，而是删除出现次数不止一次的。
+去重的可以看这个题： 83Remove Duplicates from Sorted List
+因此必须先遍历一遍，统计每个节点出现的次数。
+第二次遍历的时候，查找下个节点的值出现的次数如果不是1次，那么就删除下个节点。
+修改这个节点的下个指针指向下下个节点，这是指向该节点位置的指针不要动，因为还要判断新的next值。
+
+# Definition for singly-linked list
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def deleteDuplicates(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+        root = ListNode(0)
+        root.next = head
+        val_list = []
+        while head:
+            val_list.append(head.val)
+            head = head.next
+        counter = collections.Counter(val_list)
+        head = root
+        while head and head.next:
+            if counter[head.next.val] != 1:
+                head.next = head.next.next
+            else:
+                head = head.next
+        return root.next
