@@ -1,0 +1,65 @@
+# Time:  O(n)
+# Space: O(1)
+
+# S and T are strings composed of lowercase letters. In S, no letter occurs more than once.
+# S was sorted in some custom order previously.
+# We want to permute the characters of T so that they match the order that S was sorted.
+# More specifically, if x occurs before y in S, then x should occur before y in the returned string.
+# Return any permutation of T (as a string) that satisfies this property.
+#
+# Input:
+# S = "cba"
+# T = "abcd"
+# Output: "cbad"
+# Explanation:
+# "a", "b", "c" appear in S, so the order of "a", "b", "c" should be "c", "b", and "a".
+# Since "d" does not appear in S, it can be at any position in T. "dcba", "cdba", "cbda" are also valid outputs.
+# Note:
+# - S has length at most 26, and no character is repeated in S.
+# - T has length at most 200.
+# - S and T consist of lowercase letters only.
+
+题目大意
+S是一个自定义的字母表顺序，现在要把T中的字符按照S的顺序进行排序。如果T中有S中不存在的字符，那么可以处在结果的任何位置。
+解题方法
+使用字典保存T中的每个字母出现的次数，然后遍历S中的每个字符，查表构建新的结果字符串，并且把已经遍历了的字符的次数设为0。最后把count中剩余的字符放到最后。
+这里用到了一个技巧，Counter中使用不存在的索引会返回0
+如：
+from collections import Counter
+count = Counter("Hello World!")
+print count['8']
+##输出0
+A Counter is a dict subclass for counting hashable objects. 
+It is an unordered collection where elements are stored as dictionary keys and 
+                                    their counts are stored as dictionary values. 
+Counts are allowed to be any integer value including zero or negative counts. 
+
+from collections import Counter
+class Solution(object):
+    def customSortString(self, S, T):
+        """
+        :type S: str
+        :type T: str
+        :rtype: str
+        """
+        count = Counter(T)
+        answer = ''
+        for s in S:
+            answer += s * count[s]
+            count[s] = 0
+        for c in count:
+            answer += c * count[c]
+        return answer
+
+import collections
+class Solution(object):
+    def customSortString(self, S, T):
+        """
+        :type S: str
+        :type T: str
+        :rtype: str
+        """
+        counter, s = collections.Counter(T), set(S)
+        result = [c*counter[c] for c in S]
+        result.extend([c*counter for c, counter in counter.iteritems() if c not in s])
+        return "".join(result)
