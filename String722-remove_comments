@@ -1,0 +1,44 @@
+# Time:  O(n), n is the length of the source
+# Space: O(k), k is the max length of a line
+题目大意
+去除c++语言中的注释。包括//、/**/等。
+另外请注意，如果//不是从行首开始的时候，其之前的字符都要进行保存。同理/**/也是。总之不要删除注释范围以内的东西。
+解题方法
+看似挺简单的字符串的题，也需要使用遍历去做。
+这个遍历的方式是加入multi变量是不是一个多行的注释。根据这个变量进行针对性的操作。
+如果不是多行注释，遇到//直接跳过，
+遇到/*要把multi改成多行标记并把i+1来跳过*号，
+如果不是上述两种注释则为正常的代码，加入字符串变量。
+如果是多行注释时，遇到*/修改multi结束多行字符串并把i+1来跳过/号。
+需要注意的是line重新变成空字符串的位置应该在append之后呀，因为我们认为这部分字符串已经结束了。
+只要这样的操作才能满足题目中Example 2返回ab的结果。
+
+class Solution(object):
+    def removeComments(self, source):
+        """
+        :type source: List[str]
+        :rtype: List[str]
+        """
+        res = []
+        multi = False
+        line = ''
+        for s in source:
+            i = 0
+            while i < len(s):
+                if not multi:
+                    if s[i] == '/' and i < len(s) - 1 and s[i + 1] == '/':
+                        break
+                    elif s[i] == '/' and i < len(s) - 1 and s[i + 1] == '*':
+                        multi = True
+                        i += 1
+                    else:
+                        line += s[i]
+                else:
+                    if s[i] == '*' and i < len(s) - 1 and s[i + 1] == '/':
+                        multi = False
+                        i += 1
+                i += 1
+            if not multi and line:
+                res.append(line)
+                line = '' # 注意line重新设置成空字符串的位置
+        return res
