@@ -1,0 +1,40 @@
+# Given a list, rotate the list to the right by k places, where k is non-negative.
+# For example:
+# Given 1->2->3->4->5->NULL and k = 2,
+# return 4->5->1->2->3->NULL
+
+题目大意
+给出了链表和数字k。重复k次下面的操作：把链表最后的一个节点移动到开头。返回新的链表。
+解题方法
+首先，可以从Example 2也能看出来，存在k>len的情况，这样必须求余运算，否则肯定超时。即要求链表的长度。
+其次，如果求余之后，知道了移动几次，本质上就是把链表的后面k个节点移动到开头去。注意是平移，顺序不变的。
+所以要找到后面的k个节点，那么需要用到 19 Remove Nth Node From End of List类似的方法，
+(使用快慢指针啊，两个之间的距离是n，所以当快指针指向结尾的时候，慢指针正好指向了倒数第n个。)
+用两个距离为k的指针进行平移操作，当前面的到达了末尾，那么后面的正好是倒数第k个。
+找到倒数第k个之后，那么把这个节点和之前的节点断开，把后面的这段移到前面去即可。
+
+# Definition for singly-linked list
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def removeNthFromEnd(self, head, n):
+        """
+        :type head: ListNode
+        :type n: int
+        :rtype: ListNode
+        """
+        root = ListNode(0)
+        root.next = head
+        fast, slow, pre = root, root, root
+        while n - 1:
+            fast = fast.next
+            n -= 1
+        while fast.next:
+            fast = fast.next
+            pre = slow
+            slow = slow.next
+        pre.next = slow.next
+        return root.next
