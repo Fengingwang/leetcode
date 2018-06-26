@@ -1,0 +1,64 @@
+# Given a list of words, we may encode it by writing a reference
+# string S and a list of indexes A.
+#
+# For example, if the list of words is ["time", "me", "bell"],
+# we can write it as S = "time#bell#" and indexes = [0, 2, 5].
+#
+# Then for each index, we will recover the word by reading from
+# the reference string from that index until we reach a "#" character.
+#
+# What is the length of the shortest reference string S possible
+# that encodes the given words?
+#
+# Example:
+# Input: words = ["time", "me", "bell"]
+# Output: 10
+# Explanation: S = "time#bell#" and indexes = [0, 2, 5].
+#
+# Note:
+# 1. 1 <= words.length <= 2000.
+# 2. 1 <= words[i].length <= 7.
+# 3. Each word has only lowercase letters.
+
+题目大意：
+给定一组词words，将词语表示成word1#word2#...wordn的形式S。
+对于任意词word，都可以找到一个下标i，使得在S中从i开始到最近的#之间的部分与word相等。
+求S的最小长度。
+
+Deacription analyse
+Given string list L1, construct a another string list L2, making every word in L1 be a suffix of a word in L2.
+Return the minimum possible total length of words in L2
+Input L1: [“time”,“me”,“bell”]
+L2: [“time”,“bell”]
+Explanation of solution
+Build a set of words.
+Iterate on all words and remove all suffixes of every word from the set.
+Finally the set will the set of all encoding words.
+Iterate on the set and return sum(word length + 1 for every word in the set)
+Complexity: O(NK^2) for time and 'O(NK)' for space.
+
+def minimumLengthEncoding(self, words):
+        s = set(words)
+        for w in words:
+            for i in range(1, len(w)):
+                s.discard(w[i:])
+        return sum(len(w) + 1 for w in s)
+
+题目说得非常明确,如果字符串A是字符串B的后缀, 那A就可以用B的index来表示
+将words中的单词逐一翻转后排序
+遍历words，记上一个单词为last，当前单词为word
+如果word不以last开始，则将len(last) + 1累计至答案
+class Solution(object):
+    def minimumLengthEncoding(self, words):
+        """
+        :type words: List[str]
+        :rtype: int
+        """
+        words = sorted(word[::-1] for word in set(words))
+        ans = 0
+        last = ''
+        for word in words + ['']:
+            if not word.startswith(last):
+                ans += len(last) + 1
+            last = word
+        return ans
