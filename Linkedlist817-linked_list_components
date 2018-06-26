@@ -1,0 +1,73 @@
+# Time:  O(m + n), m is the number of G, n is the number of nodes
+# Space: O(m)
+
+# We are given head, the head node of a linked list containing unique integer values.
+# We are also given the list G, a subset of the values in the linked list.
+# Return the number of connected components in G,
+# where two values are connected if they appear consecutively in linked list.
+# Example 1:
+# Input: head: 0->1->2->3 G = [0, 1, 3]
+# Output: 2
+# Explanation:
+# 0 and 1 are connected, so [0, 1] and [3] are the two connected components.
+# Example 2:
+# Input: head: 0->1->2->3->4 G = [0, 3, 1, 4]
+# Output: 2
+# Explanation:
+# 0 and 1 are connected, 3 and 4 are connected, so [0, 1] and [3, 4] are
+# the two connected components.
+# Note:
+# - If N is the length of the linked list given by head, 1 <= N <= 10000.
+# - The value of each node in the linked list will be in the range [0, N - 1].
+# - 1 <= G.length <= 10000.
+# - G is a subset of all values in the linked list.
+
+题目大意:
+给出了一个不包含重复数字的链表，和由该链表部分节点元素构成的数组。要统计出这个数组能构成链表中的多少段联通分量。
+
+解题方法:
+这个题乍一看，感觉很高大上，其实就是 830 Positions of Large Groups 解题报告（Python）的翻版嘛。
+从左到右遍历链表依次，每遇到一个节点，就看看这个节点的数值在不在G中，并且这个节点的下一个节点是不是空（末尾），下一个节点值在不在G中。
+如果当前的节点值在G中，而下一个节点是空或者节点值不在G中，那么就是一个新的分段呗。
+Take second example in the description:
+liked list: (0->1)->2->(3->4)
+I highlighed the subset G in linked list with color red.
+The problem is just to count how many red part there are.
+One red part is one connected components.
+To do this, we just need to count tails of red parts.
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def numComponents(self, head, G):
+        """
+        :type head: ListNode
+        :type G: List[int]
+        :rtype: int
+        """
+        groups = 0
+        subset = set(G)
+        while head:
+            if head.val in subset and (not head.next or head.next.val not in subset):
+                groups += 1
+            head = head.next
+        return groups
+
+# two pointers
+class Solution(object):
+    def numComponents(self, head, G):
+        """
+        :type head: ListNode
+        :type G: List[int]
+        :rtype: int
+        """
+        p, prev, count, G = head, False, 0, set(G)
+        while p:
+            if p.val in G and not prev:
+                count += 1
+            prev, p = p.val in G, p.next;
+        return count
