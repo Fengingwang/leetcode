@@ -1,0 +1,59 @@
+# Reverse a linked list from position m to n. Do it in-place and in one-pass.
+# For example:
+# Given  1->2->3->4->5->NULL, m = 2 and n = 4,
+# return 1->4->3->2->5->NULL
+#
+# Note:
+# Given m, n satisfy the following condition:
+# 1 <= m <= n <= length of list.
+题目大意：
+将链表的[m,n]段就地逆置，一趟遍历完成。
+解题思路：
+题目主要考察链表的“就地逆置”操作（不改变链表的值，只操作指针）。
+链表的就地逆置代码片段如下：
+def reverse(head):
+    p = head
+    start = None
+    while p
+        next = p.next
+        p.next = start
+        start = p
+        p = next
+    return start
+
+在上述代码的基础上，将原链表经过逆置部分及其前后的链表片段拼接即可。
+使用“哑节点”（dummy node），可以使代码简化。
+
+# Definition for singly-linked list
+# class ListNode:
+#	 def __init__(self, x):
+#		 self.val = x
+#		 self.next = None
+
+class Solution:
+    # @param head, a ListNode
+    # @param m, an integer
+    # @param n, an integer
+    # @return a ListNode
+    def reverseBetween(self, head, m, n):
+        dummyNode = ListNode(0)
+        p = dummyNode
+        q = head
+
+        for x in range(m - 1):
+            p.next = q
+            q = q.next
+            p = p.next
+
+        start = None
+        end = q
+        next = None
+        for x in range(m, n + 1):
+            next = q.next
+            q.next = start
+            start = q
+            q = next
+
+        p.next = start
+        end.next = next
+        return dummyNode.next
