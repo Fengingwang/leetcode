@@ -1,0 +1,38 @@
+# Given a non negative integer number num. For every numbers i
+# in the range 0 <= i <= num calculate the number
+# of 1s in their binary representation and return them as an array.
+# Example:
+# For num = 5 you should return [0,1,1,2,1,2].
+# Follow up:
+# It is very easy to come up with a solution with run time O(n*sizeof(integer)). 
+# But can you do it in linear time O(n) /possibly in a single pass?
+# Space complexity should be O(n).
+
+题目大意：
+给定一个非负整数num。对于每一个满足0 ≤ i ≤ num的数字i，计算其数字的二进制表示中1的个数，并以数组形式返回。
+
+解法 利用移位运算：
+递推式：ans[n] = ans[n >> 1] + (n & 1)
+class Solution(object):
+    def countBits(self, num):
+        """
+        :type num: int
+        :rtype: List[int]
+        """
+        ans = [0]
+        for x in range(1, num + 1):
+            ans += ans[x >> 1] + (x & 1),
+        return ans
+
+解法 利用按位与运算：
+递推式：ans[n] = ans[n & (n - 1)] + 1
+class Solution(object):
+    def countBits(self, num):
+        """
+        :type num: int
+        :rtype: List[int]
+        """
+        ans = [0]
+        for x in range(1, num + 1):
+            ans += ans[x & (x - 1)] + 1,
+        return ans
