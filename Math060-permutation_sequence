@@ -1,0 +1,67 @@
+# Time:  O(n^2)
+# Space: O(n)
+# The set [1,2,3,...,n] contains a total of n! unique permutations.
+# By listing and labeling all of the permutations in order,
+# We get the following sequence (ie, for n = 3):
+# "123"
+# "132"
+# "213"
+# "231"
+# "312"
+# "321"
+# Given n and k, return the kth permutation sequence.
+# Note: Given n will be between 1 and 9 inclusive.
+找出由[1,2,3...n]中所有数字组成的序列中第k大的。
+输入: n = 3, k = 3 输出: "213"
+
+解题思路
+因为n个不同的数字可以组成n!个序列，那么首位确定的序列都有(n-1)!种不同的可能性，
+而且这些序列都根据首位的大小进行了分组，
+1...是最小的(n-1)!个，
+2...是(n-1)!+1到2(n-1)!个，
+那么现在只需要计算k中有几个(n-1)!就可以确定首位的数字，
+同样可以通过这样的方法来确定第二位、第三位……
+此外，由于列表下标从0开始，所以k要减去1。
+
+class Solution(object):
+    def getPermutation(self, n, k):
+        """
+        :type n: int
+        :type k: int
+        :rtype: str
+        """
+        k -= 1
+        factorial = 1
+        for i in range(1, n):
+            factorial *= i
+        result = []
+        array = list(range(1, n + 1))
+        for i in range(n - 1, 0, -1):
+            index = k // factorial
+            result.append(str(array[index]))
+            array = array[:index] + array[index + 1:]
+            k %= factorial
+            factorial //= i
+        result.append(str(array[0]))
+        return "".join(result)
+
+
+import math
+# Cantor ordering solution
+class Solution(object):
+    def getPermutation(self, n, k):
+        """
+        :type n: int
+        :type k: int
+        :rtype: str
+        """
+        seq, k, fact = "", k - 1, math.factorial(n - 1)
+        perm = [i for i in xrange(1, n + 1)]
+        for i in reversed(xrange(n)):
+            curr = perm[k / fact]
+            seq += str(curr)
+            perm.remove(curr)
+            if i > 0:
+                k %= fact
+                fact /= i
+        return seq
