@@ -1,0 +1,81 @@
+# Time:  O(logn), where logn is the length of result strings
+# Space: O(1)
+# Given two integers representing the numerator and denominator of a fraction,
+# return the fraction in string format.
+# If the fractional part is repeating, enclose the repeating part in parentheses.
+# For example,
+# Given numerator = 1, denominator = 2, return "0.5".
+# Given numerator = 2, denominator = 1, return "2".
+# Given numerator = 2, denominator = 3, return "0.(6)".
+
+题目大意： 
+求分数的小数表示。
+给定两个整数代表分数的分子和分母，返回字符串形式的小数
+如果小数部分是循环的，用括号将循环节围起来。
+解题思路
+本题参考书影博客的解题思路。
+解题的关键是当余数开始循环时，得数也会开始循环。
+你需要用一个哈希表存储：key = 余数， value = 当前数位在小数得数中的位置。
+一旦找到重复的余数，就可以通过查找哈希表获得循环节的起点，从而得到小数的循环节。
+执行除法的过程中，余数可能变为0。此时说明小数是有限小数，可以立即返回得数。
+与问题Divide Two Integers类似，需要注意负数和极限情况，例如-2147483648 / -1
+要考虑两点： 
+当余数出现重复时，说明分数的小数表示有循环存在，用字典记录每个余数第一次出现的位置。 
+循环结束标志：余数为0，或者出现重复的余数。
+
+class Solution:
+    # @return a string
+    def fractionToDecimal(self, numerator, denominator):
+        negativeFlag = numerator * denominator < 0
+        numerator = abs(numerator)
+        denominator = abs(denominator)
+        numList = []
+        cnt = 0
+        loopDict = dict()
+        loopStr = None
+        while True:
+            numList.append(str(numerator / denominator))
+            cnt += 1
+            numerator = 10 * (numerator % denominator)
+            if numerator == 0:
+                break
+            loc = loopDict.get(numerator)
+            if loc:
+                loopStr = "".join(numList[loc:cnt])
+                break
+            loopDict[numerator] = cnt
+        ans = numList[0]
+        if len(numList) > 1:
+            ans += "."
+        if loopStr:
+            ans += "".join(numList[1:len(numList) - len(loopStr)]) + "(" + loopStr + ")"
+        else:
+            ans += "".join(numList[1:])
+        if negativeFlag:
+            ans = "-" + ans
+        return ans
+
+class Solution(object):
+    def fractionToDecimal(self, numerator, denominator):
+        """
+        :type numerator: int
+        :type denominator: int
+        :rtype: str
+        """
+        result = ""
+        if (numerator > 0 and denominator < 0) or (numerator < 0 and denominator > 0):
+            result = "-"
+        dvd, dvs = abs(numerator), abs(denominator)
+        result += str(dvd / dvs)
+        dvd %= dvs
+        if dvd > 0:
+            result += "."
+        lookup = {}
+        while dvd and dvd not in lookup:
+            lookup[dvd] = len(result)
+            dvd *= 10
+            result += str(dvd / dvs)
+            dvd %= dvs
+        if dvd in lookup:
+            result = result[:lookup[dvd]] + "(" + result[lookup[dvd]:] + ")"
+        return result
