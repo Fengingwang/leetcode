@@ -1,0 +1,66 @@
+# Implement pow(x, n).
+
+解题思路：求幂函数的实现。使用递归，类似于二分的思路，解法来自Mark Allen Weiss的《数据结构与算法分析》。
+注意点：n是负数时需要取相反数
+
+解题思路
+最简答的方法就是把n个x直接做乘法，但这样要进行(n-1)次运算。
+现在以2**8(表示2的8次方)作为例子，需要进行7次乘法，
+但如果当做(2**2)**4->((2**2)**2)**2来计算就只要做3次乘法。
+即当n为奇数时，直接乘上当前的x，偶数时x变为x的平方，n除以2。
+这样就可以较快速的求出结果。当n为负数时要取倒数。
+
+class Solution(object):
+    def myPow(self, x, n):
+        """
+        :type x: float
+        :type n: int
+        :rtype: float
+        """
+        flag = 1 if n >= 0 else -1
+        result = 1
+        n = abs(n)
+        while n > 0:
+            if n & 1 == 1:
+                result *= x
+            n >>= 1
+            x *= x
+        if flag < 0:
+            result = 1 / result
+        return result
+
+# Iterative solution.
+class Solution(object):
+    def myPow(self, x, n):
+        """
+        :type x: float
+        :type n: int
+        :rtype: float
+        """
+        result = 1
+        abs_n = abs(n)
+        while abs_n:
+            if abs_n & 1:
+                result *= x
+            abs_n >>= 1
+            x *= x
+
+        return 1 / result if n < 0 else result
+
+# Recursive solution.
+class Solution2(object):
+    def myPow(self, x, n):
+        """
+        :type x: float
+        :type n: int
+        :rtype: float
+        """
+        if n < 0 and n != -n:
+            return 1.0 / self.myPow(x, -n)
+        if n == 0:
+            return 1
+        v = self.myPow(x, n / 2)
+        if n % 2 == 0:
+            return v * v
+        else:
+            return v * v * x
