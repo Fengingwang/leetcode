@@ -1,0 +1,79 @@
+# Time:  O(logn)
+# Space: O(1)
+# You are standing at position 0 on an infinite number line. There is a goal at position target.
+# On each move, you can either go left or right.
+# During the n-th move (starting from 1), you take n steps.
+# Return the minimum number of steps required to reach the destination.
+# Input: target = 3 Output: 2
+# Explanation:
+# On the first move we step from 0 to 1.
+# On the second step we step from 1 to 3.
+# Input: target = 2 Output: 3
+# Explanation:
+# On the first move we step from 0 to 1.
+# On the second move we step  from 1 to -1.
+# On the third move we step from -1 to 2.
+# Note:
+# - target will be a non-zero integer in the range [-10^9, 10^9].
+题目大意：第i时刻可以移动+i,-i单位距离。初始在原点，问最少对少时间可以移动到target坐标。
+
+这道题让我们从起点0开始，每次可以向数轴的左右两个方向中的任意一个走，第一步走距离1，第二步走距离2，
+以此类推，第n步走距离n，然后给了我们一个目标值target，问我们最少用多少步可以到达这个值。
+开始贪婪算法，就是如果加上距离大于目标值的话，就减去这个距离，到是当目标值是4的话，贪婪算法会fail。
+后来尝试BFS，就是每次都把当前能到大的所有的点，都加上和减去当前距离，形成新的位置，加入数组中，当某个新的位置达到目标值时返回，但不高效
+数学知识+小trick，
+第一个trick: 到达target和-target的步数相同，因为数轴是对称的，只要将到达target的没步的距离都取反，就能到达-target。
+第二个trick: 解题的关键，比如说目标值是4，那么如果我们一直累加步数，直到其正好大于等于target时，有：
+0 + 1 = 1
+1 + 2 = 3
+3 + 3 = 6
+第三步加上3，得到了6，超过了目标值4，超过了的距离为2，是偶数，那么实际上
+我们只要将加上距离为1的时候，不加1，而是加-1，那么此时累加和就损失了2，那么正好能到目标值4，如下：
+0 - 1 = -1
+-1 + 2 = 1
+1 + 3 = 4
+那么，第二个trick就是，
+当超过目标值的差值d为偶数时，只要将第d/2步的距离取反，就能得到目标值，此时的步数即为到达目标值的步数。
+那么，如果d为奇数时，且当前为第n步，那么我们看下一步n+1的奇偶，
+    如果n+1为奇数，那么加上n+1再做差，得到的差值就为偶数了，问题解决，
+    如果n+1为偶数，那么还得加上n+2这个奇数，才能让差值为偶数，这样就多加了两步
+我们先对target取绝对值，因为正负不影响最小步数。
+然后我们求出第n步，使得从1累加到n刚好大于等于target，我们可以反向利用求和公式，来求解出n，
+然后算出当前n的累加和sum，如果此时sum和target正好相等，perfect！直接返回n，
+否则就是计算差值，如果差值时偶数，那么也直接返回n，
+             如果是奇数，判断此时n的奇偶，
+                     如果n是奇数，则返回n+2，
+                     若n是偶数，返回n+1
+
+我们也可以不用求和公式来快速定位n，而是通过累加来做，res为我们的当前步数，也是最终需要返回的结果，
+sum是加上每步距离的累加值，如果sum小于target，或者sum减去target的差值为奇数，
+我们进行循环，步数res自增1，然后sum加上步数res，
+最后跳出循环的条件就是差值为偶数，也符合我们上的分析
+
+import math
+class Solution(object):
+    def reachNumber(self, target):
+        """
+        :type target: int
+        :rtype: int
+        """
+        target = abs(target)
+        k = int(math.ceil((-1+math.sqrt(1+8*target))/2))
+        target -= k*(k+1)/2
+        return k if target%2 == 0 else k+1+k%2
+
+
+# Time:  O(sqrt(n))
+# Space: O(1)
+class Solution2(object):
+    def reachNumber(self, target):
+        """
+        :type target: int
+        :rtype: int
+        """
+        target = abs(target)
+        k = 0
+        while target > 0:
+            k += 1
+            target -= k
+        return k if target%2 == 0 else k+1+k%2
