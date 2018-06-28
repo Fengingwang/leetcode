@@ -1,0 +1,37 @@
+# Time:  O(logn)
+# Space: O(1)
+# There is a list of sorted integers from 1 to n. Starting from left to right,
+# remove the first number and every other number afterward until you reach the end of the list.
+# Repeat the previous step again, but this time from right to left,
+# remove the right most number and every other number from the remaining numbers.
+# We keep repeating the steps again, alternating left to right and right to left,
+# until a single number remains.
+# Find the last number that remains starting with a list of length n.
+# Example:
+# Input:
+# n = 9,
+# 1 2 3 4 5 6 7 8 9
+# 2 4 6 8
+# 2 6
+# 6
+# Output:
+# 6
+
+这道题首先可以推出一个规律： 
+无论是1还是2，若当前序列长度为k，那么下一轮一定只剩k/2【整除】个
+根据题设要求的数字移除过程，可以发现每执行完一趟数字移除操作，列表中剩余相邻数字之间的差都会加倍。
+因此解决问题的关键就是找到每一趟数字消除操作之后剩余数字的起点。
+
+class Solution(object):
+    def lastRemaining(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        start, step, direction = 1, 2, 1
+        while n > 1:
+            start += direction * (step * (n/2) - step/2)
+            n /= 2
+            step *= 2
+            direction *= -1
+        return start
