@@ -1,0 +1,77 @@
+# Time:  O(sqrt(n))
+# Space: O(1)
+# Initially on a notepad only one character 'A' is present.
+# You can perform two operations on this notepad for each step:
+# Copy All: You can copy all the characters present on the notepad (partial copy is not allowed).
+# Paste: You can paste the characters which are copied last time.
+# Given a number n.
+# You have to get exactly n 'A' on the notepad by performing the minimum number of steps
+# Output the minimum number of steps to get n 'A'.
+# Input: 3 Output: 3
+# Explanation:
+# Intitally, we have one character 'A'.
+# In step 1, we use Copy All operation.
+# In step 2, we use Paste operation to get 'AA'.
+# In step 3, we use Paste operation to get 'AAA'.
+# Note:
+# The n will be in the range [1, 1000].
+
+题目大意：
+有下列四种操作：
+Key 1: (A): 在屏幕上打印'A'
+Key 2: (Ctrl-A): 全选
+Key 3: (Ctrl-C): 将选中内容复制到缓冲区
+Key 4: (Ctrl-V): 将缓冲区内容粘贴在屏幕上
+给定操作次数N，求最多可以打印的字符数。
+
+解题思路： 动态规划（Dynamic Programming）
+dp[z][y]表示利用z次操作，缓冲区内的字符数为y时，屏幕上打印的最大字符数
+初始dp[0][0] = 0
+状态转移方程：
+当按下字符A时：
+dp[z + 1][y] = max(dp[z + 1][y], dp[z][y] + 1)
+当按下Ctrl-V时：
+dp[z + 1][y] = max(dp[z + 1][y], dp[z][y] + y)
+当按下Ctrl-A + Ctrl-C时：
+dp[z + 2][dp[z][y]] = max(dp[z + 2][dp[z][y]], dp[z][y])
+
+class Solution(object):
+    def maxA(self, N):
+        """
+        :type N: int
+        :rtype: int
+        """
+        dp = collections.defaultdict(lambda : collections.defaultdict(int))
+        dp[0][0] = 0 #step, buffer
+        for z in range(N):
+            for y in dp[z]:
+                #Key 1: (A):
+                dp[z + 1][y] = max(dp[z + 1][y], dp[z][y] + 1)
+                #Key 4: (Ctrl-V):
+                dp[z + 1][y] = max(dp[z + 1][y], dp[z][y] + y)
+                #Key 2: (Ctrl-A): + Key 3: (Ctrl-C):
+                dp[z + 2][dp[z][y]] = max(dp[z + 2][dp[z][y]], dp[z][y])
+        return max(dp[N].values())
+
+解题思路:
+这道题给了我们四个操作，分别是打印A，全选，复制，粘贴。每个操作都算一个步骤，给了我们一个数字N，问我们N个操作最多能输出多个A。
+我们可以分析题目中的例子可以发现，N步最少都能打印N个A出来，因为我们可以每步都是打印A。
+那么能超过N的情况肯定就是使用了复制粘贴，这里由于全选和复制要占用两步，所以能增加A的个数的操作其实只有N-2步，
+那么我们如何确定打印几个A，剩下都是粘贴呢，其实是个trade off，A打印的太多或太少，都不会得到最大结果，
+所以打印A和粘贴的次数要接近，最简单的方法就是遍历所有的情况然后取最大值，
+打印A的次数在[1, N-3]之间，粘贴的次数为N-2-i，加上打印出的部分，就是N-1-i了
+
+要想N步生成最多个A，可在N-2步的时候，Ctrl A，N-1步的时候，Ctrl C，第N步的时候Ctrl V，这样就能将N-3步生成的A的个数，翻倍。
+如何确定在第几步Ctrl A，然后再Ctrl C、Ctrl V呢，需要依次判断第i-3步之前的步骤。
+得到递推公式 dp[i] = max(dp[i],dp[i-j-1]);dp[i]表示第i步生成的最多的A的个数。
+
+class Solution {
+public:
+    int maxA(int N) {
+        int res = N;
+        for (int i = 1; i < N - 2; ++i) {
+            res = max(res, maxA(i) * (N - 1 - i));
+        }
+        return res;
+    }
+};
