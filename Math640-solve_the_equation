@@ -1,0 +1,33 @@
+# Time:  O(n)
+# Space: O(n)
+# Solve a given equation and return the value of x in the form of string "x=#value".
+# The equation contains only '+', '-' operation, the variable x and its coefficient.
+# If there is no solution for the equation, return "No solution".
+# If there are infinite solutions for the equation, return "Infinite solutions".
+# If there is exactly one solution for the equation, we ensure that the value of x is an integer.
+# Input: "x+5-3+x=6+x-2" Output: "x=2"
+# Input: "x=x"           Output: "Infinite solutions"
+# Input: "2x=x"          Output: "x=0"
+# Input: "2x+3x-6x=x+2"  Output: "x=-1"
+# Input: "x=x+2"         Output: "No solution"
+
+题目大意: 求解一元线性方程，求得时候注意是否有解或者无穷解等条件。
+这道题给了我们一个用字符串表示的方程式，让我们求出x的解，根据例子可知，还包括x有无穷多个解和x没有解的情况。
+解一元一次方程没什么难度，难点在于处理字符串，如何将x的系数合并起来，将常数合并起来，化简成ax=b的形式来求解。
+
+import re
+class Solution(object):
+    def solveEquation(self, equation):
+        """
+        :type equation: str
+        :rtype: str
+        """
+        a, b, side = 0, 0, 1
+        for eq, sign, num, isx in re.findall('(=)|([-+]?)(\d*)(x?)', equation):
+            if eq:
+                side = -1
+            elif isx:
+                a += side * int(sign + '1') * int(num or 1)
+            elif num:
+                b -= side * int(sign + num)
+        return 'x=%d' % (b / a) if a else 'No solution' if b else 'Infinite solutions'
