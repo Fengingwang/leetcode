@@ -1,0 +1,54 @@
+# Time:  O(n)
+# Space: O(1)
+# A sequence of number is called arithmetic if it consists of at least three elements
+# and if the difference between any two consecutive elements is the same.
+# For example, these are arithmetic sequence:
+# 1, 3, 5, 7, 9
+# 7, 7, 7, 7
+# 3, -1, -5, -9
+# The following sequence is not arithmetic.
+# 1, 1, 2, 5, 7
+# A zero-indexed array A consisting of N numbers is given. A slice of that array is any pair
+# of integers (P, Q) such that 0 <= P < Q < N.
+# A slice (P, Q) of array A is called arithmetic if the sequence:
+# A[P], A[p + 1], ..., A[Q - 1], A[Q] is arithmetic. In particular, this means that P + 1 < Q.
+# The function should return the number of arithmetic slices in the array A.
+# Example:
+# A = [1, 2, 3, 4]
+# return: 3, for 3 arithmetic slices in A: [1, 2, 3], [2, 3, 4] and [1, 2, 3, 4] itself.
+
+题目大意： 给你一串数字，返回这串数字中能够构成等差数列的子串的数目。
+
+解题方法
+引用自：http://blog.csdn.net/camellhf/article/details/52824234
+我的想法是通过扫描一遍数组就能得到结果，所以得先知道如果扫描发现下一个数字能够加入到等差数列中，那么总的数目会有怎样的变化。 
+因此，我列出了下表：
+数组             等差数列的数目            与上一数组的等差数列数目比较
+1 2 3               1                       1 - 0 = 1
+1 2 3 4             3                       3 - 1 = 2
+1 2 3 4 5           6                       6 - 3 = 3
+1 2 3 4 5 6         10                      10 - 6 = 4
+1 2 3 4 5 6 7       15                      15 - 10 = 5
+可以看出等差数列的数目是二阶等差数列。
+观察就能发现两个等差数列数目之差（表格第三列）就是[1,2, 3, 4, 5……]这个序列，
+因此每次增加一个等差数列的元素，总的等差数列的数目就会增加[1,2, 3, 4, 5……]中对应的数值。
+按照这一点，在代码实现时就设置一个变量addend，表示增加的数目，它对应着[1,2, 3, 4, 5……]这个序列，
+如果下一个数组元素能够加入到等差数列中，addend就自增1，然后总的数目就增加addend。
+如果下一个数组元素不能加入到等差数列中，addend就重置为0。这样通过一个循环就能获得结果。
+为什么要把addend设置成0呢？因为题目要求能构成等差数列的子串的数目。设置成0开始计算后面的子串能够成等差数列的数目了。
+
+class Solution(object):
+    def numberOfArithmeticSlices(self, A):
+        """
+        :type A: List[int]
+        :rtype: int
+        """
+        count = 0
+        addend = 0
+        for i in xrange(len(A) - 2):
+            if A[i + 1] - A[i] == A[i + 2] - A[i + 1]:
+                addend += 1
+                count += addend
+            else:
+                addend = 0
+        return count
