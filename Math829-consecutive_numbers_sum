@@ -1,0 +1,40 @@
+# Time:  O(sqrt(n))
+# Space: O(1)
+# Given a positive integer N, how many ways can we write it as a sum of
+# consecutive positive integers?
+#
+# Input: 5 Output: 2
+# Explanation: 5 = 5 = 2 + 3
+# Input: 9 Output: 3
+# Explanation: 9 = 9 = 4 + 5 = 2 + 3 + 4
+# Input: 15 Output: 4
+# Explanation: 15 = 15 = 8 + 7 = 4 + 5 + 6 = 1 + 2 + 3 + 4 + 5
+# Note: 1 <= N <= 10 ^ 9.
+题意是给定一个数字、求出连续数字只和等于这个数的方案总数。
+总体思路是遍历查找所有数字数量，如2个数字能否组成、3个数字能否组成等等。
+这题用到了一个数学公式：等差数列只和等于中位数乘以数量。
+思路：
+枚举连续整数的个数c
+当c为奇数时， floor(N / c) 为第(c + 1) / 2个数
+当c为偶数时，floor(N / c)为第c / 2个数
+综上，floor(N / c)为第c / 2 + c % 2个数，并且floor(N / c) ≥ c / 2 + c % 2
+c符合下列两种情况时，存在一组长度为c的连续整数和为N
+c为奇数，并且N可以整除c
+c为偶数，并且floor(N / c) * c + c / 2 == N
+
+class Solution(object):
+    def consecutiveNumbersSum(self, N):
+        """
+        :type N: int
+        :rtype: int
+        """
+        ans = c = 0
+        while True:
+            c += 1
+            if N / c < c / 2 + c % 2:
+                break
+            if c % 2 and N % c == 0:
+                ans += 1
+            elif c % 2 == 0 and (N / c) * c + c / 2 == N:
+                ans += 1
+        return ans
