@@ -1,0 +1,97 @@
+# Time:  O(min(n, h)), per operation
+# Space: O(min(n, h))
+# Design a data structure that supports the following two operations:
+# void addWord(word)
+# bool search(word)
+# search(word) can search a literal word or a regular expression string
+# containing only letters a-z or ..A . means it can represent any one letter
+#
+# For example:
+# addWord("bad")
+# addWord("dad")
+# addWord("mad")
+# search("pad") -> false
+# search("bad") -> true
+# search(".ad") -> true
+# search("b..") -> true
+# Note:
+# You may assume that all words are consist of lowercase letters a-z.
+
+设计一个数据结构，支持两种操作： void addWord(word) + bool search(word)
+search 操作可以查找字符串常量，或者一个包含.的正则表达式。其中.可以表示任何单个的字符。
+假定所有的单词都是由小写字母组成。
+
+解题思路： 字典树（Trie），通配符.可以用枚举实现。
+要实现一个具有字符串检索功能的词典，我们当然会想到 Trie树。
+当要插入一个字符串时，将它插入到 Trie 树即可。
+当要检索一个字符串时，若该字符串含有.，由于.可以匹配当前层的所有节点，这时需要同时向下检索多条路径（使用递归）。
+
+class TrieNode:
+    # Initialize your data structure here.
+    def __init__(self):
+        self.childs = dict()
+        self.isWord = False
+
+class WordDictionary:
+    def __init__(self):
+        self.root = TrieNode()
+
+    # @param {string} word
+    # @return {void}
+    # Adds a word into the data structure.
+    def addWord(self, word):
+        node = self.root
+        for letter in word:
+            child = node.childs.get(letter)
+            if child is None:
+                child = TrieNode()
+                node.childs[letter] = child
+            node = child
+        node.isWord = True
+
+    # @param {string} word
+    # @return {boolean}
+    # Returns if the word is in the data structure. A word could
+    # contain the dot character '.' to represent any one letter.
+    def search(self, word):
+        return self.find(self.root, word)
+    
+    def find(self, node, word):
+        if word == '':
+            return node.isWord
+        if word[0] == '.':
+            for x in node.childs:
+                if self.find(node.childs[x], word[1:]):
+                    return True
+        else:
+            child = node.childs.get(word[0])
+            if child:
+                return self.find(child, word[1:])
+        return False
+
+
+class WordDictionary(object):
+    def __init__(self):
+        self.word_dict = collections.defaultdict(list)
+        
+
+    def addWord(self, word):
+        if word:
+            self.word_dict[len(word)].append(word)
+
+def search(self, word):
+    if not word:
+        return False
+        
+    if '.' not in word:
+        return word in self.word_dict[len(word)]
+        
+    for w in self.word_dict[len(word)]:
+        success = True
+        for index, ch in enumerate(word):
+            if ch != w[index] and ch != '.':
+                success = False
+                break
+        if success:
+            return True
+     return False
