@@ -1,0 +1,17 @@
+# Given an integer array nums, find the sum of
+# the elements between indices i and j (i <= j), inclusive
+# The update(i, val) function modifies nums by
+# updating the element at index i to val.
+# Example:
+# Given nums = [1, 3, 5]
+# sumRange(0, 2) -> 9
+# update(1, 2)
+# sumRange(0, 2) -> 8
+# Note:
+# The array is only modifiable by the update function
+# You may assume the number of calls to update
+# and sumRange function is distributed evenly
+
+构建一个数据结构，共有两种操作方式
+sumRange(i，j)：计算[i,j]范围内数组和
+update(i,val)：将位于数组坐标i的元素值改为val
