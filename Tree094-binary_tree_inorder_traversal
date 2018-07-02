@@ -1,0 +1,42 @@
+# Given a binary tree, return the inorder traversal of its nodes values
+# For example:
+# Given binary tree {1,#,2,3},
+#   1
+#    \
+#     2
+#    /
+#   3
+# return [1,3,2].
+# Note: Recursive solution is trivial, could you do it iteratively?
+
+原题: 不用递归来实现树的中序遍历。
+解题思路: 
+通过栈来实现，从根节点开始，不断寻找左节点，并把这些节点依次压入栈内，
+只有在该节点没有左节点或者它的左子树都已经遍历完成后，它才会从栈内弹出，
+这时候访问该节点，并它的右节点当做新的根节点一样不断遍历。
+
+# Definition for a binary tree node
+class TreeNode(object):
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution(object):
+    def inorderTraversal(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        result = []
+        stack = []
+        p = root
+        while p or stack: 
+            while p:
+                stack.append(p) # Save the nodes which have left child
+                p = p.left
+            if stack:
+                p = stack.pop()
+                result.append(p.val) # Visit the middle node
+                p = p.right          # Visit the right subtree
+        return result
